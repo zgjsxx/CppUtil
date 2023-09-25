@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 project(CommonTest)
 
 set(SOURCES 
-    Status_unittest.cpp    
+    Status_test.cpp    
 )
 
 string(REPLACE ".cpp" "" UNITTEST_BIN  "${SOURCES}")
