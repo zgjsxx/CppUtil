@@ -8,6 +8,8 @@ project(
 
 set(COMMON_SOURCES 
     src/Status.cpp
+    src/Thread.cpp
+    src/ProcessInfo.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED)
