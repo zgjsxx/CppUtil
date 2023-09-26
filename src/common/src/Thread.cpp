@@ -26,9 +26,9 @@ struct Thread::Impl
     
   }
 
-  bool         started_;
-  bool         joined_;
-  pid_t        tid_;
+  bool         started_{false};
+  bool         joined_{false};
+  pid_t        tid_{0};
   ThreadFunc   func_;
   std::string  name_;
   std::unique_ptr<std::thread> threadPtr_{nullptr};
@@ -38,6 +38,14 @@ Thread::Thread(ThreadFunc func, const std::string& name):
     impl_(std::make_unique<Impl>(func, name))
 {
 
+}
+
+Thread::~Thread()
+{
+    if(impl_->started_)
+    {
+        stop();
+    }
 }
 
 void Thread::start()
@@ -50,7 +58,10 @@ void Thread::start()
 
 void Thread::exec()
 {
-    ::prctl(PR_SET_NAME, impl_->name_);
+    if(!impl_->name_.empty()){
+        ::prctl(PR_SET_NAME, impl_->name_);
+    }
+
     impl_->func_();
 }
 
@@ -59,7 +70,7 @@ void Thread::stop()
     if(nullptr != impl_->threadPtr_ && impl_->threadPtr_->joinable()){
         impl_->threadPtr_->join();
         impl_->threadPtr_ = nullptr;
-    } 
+    }
 }
 
 bool Thread::started() const
@@ -69,12 +80,12 @@ bool Thread::started() const
 
 pid_t Thread::tid() const
 {
-
+    return 0;
 }
 
-const std::string& name()
+const std::string& Thread::name() const
 {
-    
+    return impl_->name_;
 }
 
 } // CppUtil

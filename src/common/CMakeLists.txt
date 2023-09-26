@@ -9,6 +9,7 @@ project(
 set(COMMON_SOURCES 
     src/Status.cpp
     src/Thread.cpp
+    src/ThreadPool.cpp
     src/ProcessInfo.cpp
 )
 

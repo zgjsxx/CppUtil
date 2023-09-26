@@ -22,8 +22,9 @@ public:
     bool started() const;
     pid_t tid() const;
 
-    const std::string& name();
+    const std::string& name() const;
     void exec();
+
 private:
     struct Impl;
     std::unique_ptr<Impl> impl_;
