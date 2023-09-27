@@ -17,6 +17,7 @@ class ThreadPool : public Noncopyable {
 
   void start(int num);
   void stop();
+  void stopSafe();
   void postTask(Task task);
   Task getTask();
   void execTask();

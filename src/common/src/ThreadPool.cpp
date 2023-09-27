@@ -55,6 +55,7 @@ void ThreadPool::start(int num)
     }
 }
 
+//stop and drop the jobs in the queue
 void ThreadPool::stop()
 {
     impl_->running_ = false;
@@ -62,6 +63,25 @@ void ThreadPool::stop()
     impl_->fullCond_.notify_all();
     for(auto& th : impl_->threads_){
         th->stop();
+    }
+}
+
+//stop and exec the extra jobs in the queue
+void ThreadPool::stopSafe()
+{
+    impl_->running_ = false;
+    impl_->emptyCond_.notify_all();
+    impl_->fullCond_.notify_all();
+    for(auto& th : impl_->threads_){
+        th->stop();
+    }
+    {
+        std::unique_lock<std::mutex> lk(impl_->mtx_);
+        while(!impl_->queue_.empty()){
+            auto task = impl_->queue_.front();
+            impl_->queue_.pop_front();
+            task();           
+        }
     }
 }
 

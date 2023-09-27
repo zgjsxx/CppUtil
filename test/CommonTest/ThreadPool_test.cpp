@@ -6,7 +6,7 @@
 #include "common/include/ThreadPool.h"
 #include "common/include/CountDownLatch.h"
 
-TEST_CASE("1", "2"){
+TEST_CASE("1", "ThreadPool"){
     CppUtil::ThreadPool threadpool("default");
     threadpool.start(3);
     CppUtil::CountDownLatch latch(3);
@@ -20,4 +20,17 @@ TEST_CASE("1", "2"){
 
     latch.wait();
     threadpool.stop();
+}
+
+TEST_CASE("2", "ThreadPool"){
+    CppUtil::ThreadPool threadpool("default");
+    threadpool.start(3);
+    for(int i = 0;i < 3; ++i){
+        auto task = [](){
+            std::cout << "Hello World" << std::endl;
+        };
+        threadpool.postTask(task);
+    }
+
+    threadpool.stopSafe();
 }
