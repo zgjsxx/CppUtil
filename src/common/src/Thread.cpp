@@ -2,6 +2,7 @@
 #include <sys/prctl.h>
 #include <sys/syscall.h>
 #include <unistd.h>
+#include <atomic>
 #include "common/include/Thread.h"
 
 
@@ -19,15 +20,12 @@ struct Thread::Impl
   : func_(std::move(func)),
     started_(false),
     tid_(0),
-    name_(name),
-    joined_(0)
-
+    name_(name)
   {
     
   }
 
-  bool         started_{false};
-  bool         joined_{false};
+  std::atomic_bool         started_{false};
   pid_t        tid_{0};
   ThreadFunc   func_;
   std::string  name_;
@@ -68,6 +66,7 @@ void Thread::exec()
 void Thread::stop()
 {
     if(nullptr != impl_->threadPtr_ && impl_->threadPtr_->joinable()){
+        impl_->started_ = false;
         impl_->threadPtr_->join();
         impl_->threadPtr_ = nullptr;
     }

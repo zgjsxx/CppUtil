@@ -1,32 +1,31 @@
 #ifndef CPP_UTIL_COMMON_THREADPOOL_H
 #define CPP_UTIL_COMMON_THREADPOOL_H
 
+#include <functional>
 #include <memory>
 #include <string>
-#include <functional>
+
 #include "common/include/Noncopyable.h"
 
-namespace CppUtil
-{
+namespace CppUtil {
 
-class ThreadPool : public Noncopyable
-{
-public:
-  using Task = std::function<void ()>;
+class ThreadPool : public Noncopyable {
+ public:
+  using Task = std::function<void()>;
   explicit ThreadPool(const std::string& name = "DefaultThreadPool");
   ~ThreadPool();
 
   void start(int num);
+  void stop();
+  void postTask(Task task);
+  Task getTask();
+  void execTask();
 
-   void postTask(Task task);
-   Task getTask();
-
-private:
-    struct Impl;
-    std::unique_ptr<Impl> impl_{nullptr};
+ private:
+  struct Impl;
+  std::unique_ptr<Impl> impl_{nullptr};
 };
 
-}
-
+}  // namespace CppUtil
 
 #endif
