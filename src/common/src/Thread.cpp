@@ -1,7 +1,5 @@
 #include <thread>
 #include <sys/prctl.h>
-#include <sys/syscall.h>
-#include <unistd.h>
 #include <atomic>
 #include "common/include/Thread.h"
 
@@ -9,10 +7,7 @@
 namespace CppUtil
 {
 
-pid_t gettid()
-{
-    return static_cast<pid_t>(::syscall(SYS_gettid));
-}
+thread_local int t_tid = 0;
 
 struct Thread::Impl
 {

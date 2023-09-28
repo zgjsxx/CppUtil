@@ -4,10 +4,29 @@
 #include <memory>
 #include <functional>
 #include <string>
+#include <sys/syscall.h>
+#include <unistd.h>
 #include "common/include/Noncopyable.h"
 
 namespace CppUtil
 {
+
+extern thread_local int t_tid;
+
+inline pid_t gettid()
+{
+    return static_cast<pid_t>(::syscall(SYS_gettid));
+}
+
+inline int getCurrentTid()
+{
+    if(t_tid == 0)
+    {
+        t_tid = ::gettid();
+    }
+    return t_tid;
+}
+
 
 class Thread : public Noncopyable
 {

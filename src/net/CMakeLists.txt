@@ -9,6 +9,12 @@ project(
 set(NET_SOURCES 
     src/EventLoop.cpp
     src/EpollMonitor.cpp
+    src/Channel.cpp
+    src/InetAddress.cpp
+    src/SocketUtil.cpp
+    src/TcpServer.cpp
+    src/Socket.cpp
+    src/Acceptor.cpp
     )
 
 
