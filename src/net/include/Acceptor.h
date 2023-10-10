@@ -48,7 +48,7 @@ class Acceptor : public Noncopyable
  private:
   void handleRead();
 
-  EventLoop* loop_;
+  EventLoop* loop_{nullptr};
   Socket acceptSocket_;
   Channel acceptChannel_;
   NewConnCallback newConnCallback_;

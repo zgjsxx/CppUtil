@@ -11,7 +11,8 @@ namespace Net
 class InetAddress 
 {
 public:
-  InetAddress(std::string ip, uint16_t port, bool ipv6 = false);
+  InetAddress() = default;
+   InetAddress(std::string ip, uint16_t port, bool ipv6 = false);
 
     const struct sockaddr* getSockAddr() const { 
         return reinterpret_cast<const sockaddr*>(&addr6_); 

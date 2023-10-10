@@ -15,6 +15,7 @@ set(NET_SOURCES
     src/TcpServer.cpp
     src/Socket.cpp
     src/Acceptor.cpp
+    src/EventLoopThread.cpp
     )
 
 
