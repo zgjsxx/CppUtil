@@ -4,6 +4,7 @@
 #include <atomic>
 #include <vector>
 #include <memory>
+#include <functional>
 #include "common/include/Noncopyable.h"
 
 namespace CppUtil {
@@ -15,11 +16,15 @@ class EpollMonitor;
 
 class EventLoop : public Noncopyable {
  public:
+  using Functor = std::function<void()>;
   EventLoop();
   ~EventLoop();
 
  public:
   void loop();
+  void runInLoop(const Functor& cb);
+  void quit();
+  void queueInLoop(const Functor& cb);
 
  private:
   using ChannelList =  std::vector<Channel*>;

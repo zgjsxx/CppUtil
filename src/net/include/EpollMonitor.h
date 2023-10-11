@@ -9,6 +9,7 @@ namespace CppUtil
 
 namespace Net
 {
+
 class EventLoop;
 class ChannelList;
 
@@ -19,7 +20,7 @@ class EpollMonitor {
   EpollMonitor(EventLoop* loop);
   ~EpollMonitor();
 
-  void poll(int timeoutMs);
+  void poll(int timeoutMs, ChannelList* activeChannels);
   void fillActiveChannels(int numEvents,
                               ChannelList* activeChannels) const;
    //add event/delete event

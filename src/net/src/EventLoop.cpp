@@ -22,7 +22,7 @@ void EventLoop::loop()
 {
     while(!quit_){
         activeChannels_.clear();
-        sockMonitorPtr_->poll(100);
+        sockMonitorPtr_->poll(100, &activeChannels_);
         for(auto& channel : activeChannels_)
         {
             currentActiveChannel_ = channel;
@@ -32,6 +32,11 @@ void EventLoop::loop()
     }
 }
 
+void EventLoop::runInLoop(const Functor& cb)
+{
+    cb();
 }
 
+
+}
 }

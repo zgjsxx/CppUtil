@@ -1,6 +1,7 @@
 #include <sys/epoll.h>
 #include <unistd.h>
 #include <cstring>
+#include <errno.h>
 #include "net/include/EpollMonitor.h"
 
 
@@ -19,20 +20,26 @@ EpollMonitor::~EpollMonitor()
     ::close(epollfd_);
 }
 
-void EpollMonitor::poll(int timeoutMs)
+void EpollMonitor::poll(int timeoutMs, ChannelList* activeChannels)
 {
     int numEvents = ::epoll_wait(epollfd_, 
                         &*events_.begin(),
                         static_cast<int>(events_.size()),
                         timeoutMs);
+    int savedErrno = errno;
     if(numEvents > 0){
-        //fillActiveEvents
+        fillActiveChannels(numEvents, activeChannels);
+        if((size_t)numEvents == events_.size()){
+            events_.resize(events_.size() * 2);
+        }
     }
     else if(numEvents == 0){
         //no event happens
     }
     else{
-
+        if(savedErrno != EINTR){
+            errno = savedErrno;
+        }
     }
 }
 
