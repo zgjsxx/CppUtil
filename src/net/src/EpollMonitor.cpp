@@ -74,30 +74,25 @@ void EpollMonitor::updateInterestEvent(int operation, Channel* channel)
 
 void EpollMonitor::updateChannel(Channel* channel)
 {
-    int index;
+    const int index = channel->index();
     if(index == kNew || index == kDeleted){
         int fd = channel->getFd();
         if(index == kNew)
         {
             channels_[fd] = channel;
         }
-        else
-        {
 
-        }
-        // channel->set_index(kAdded);
+        channel->setIndex(kAdded);
         updateInterestEvent(EPOLL_CTL_ADD, channel);
     }
     else
     {
         // update existing one with EPOLL_CTL_MOD/DEL
-        int fd = channel->getFd();
-        (void)fd;
 
         if (channel->isNoneEvent())
         {
             updateInterestEvent(EPOLL_CTL_DEL, channel);
-            // channel->set_index(kDeleted);
+            channel->setIndex(kDeleted);
         }
         else
         {
@@ -106,6 +101,28 @@ void EpollMonitor::updateChannel(Channel* channel)
     }
 
 }
+
+void EpollMonitor::removeChannel(Channel* channel)
+{
+  int fd = channel->getFd();
+  int index = channel->index();
+  size_t n = channels_.erase(fd);
+  (void)n;
+
+  if (index == kAdded)
+  {
+    updateInterestEvent(EPOLL_CTL_DEL, channel);
+  }
+  channel->setIndex(kNew);
+}
+
+bool EpollMonitor::hasChannel(Channel* channel) const
+{
+  ChannelMap::const_iterator it = channels_.find(channel->getFd());
+  return it != channels_.end() && it->second == channel;
+}
+
+
 
 } // namespace Net
 } // namespace CppUtil

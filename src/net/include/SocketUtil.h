@@ -9,6 +9,9 @@ namespace CppUtil
 
 namespace Net
 {
+namespace SockUtil
+{
+
 
 int createNonblocking(sa_family_t family);
 
@@ -20,6 +23,11 @@ void convertIpAddress(const std::string& ip, uint16_t port, struct sockaddr_in* 
 
 void convertIpAddress(const std::string& ip, uint16_t port, struct sockaddr_in6* addr);
 
+ssize_t read(int sockfd, void *buf, size_t count);
+
+ssize_t write(int sockfd, const void *buf, size_t count);
+
+} // namespace SockUtil
 } // namespace Net
 } // namespace CppUtil
 #endif

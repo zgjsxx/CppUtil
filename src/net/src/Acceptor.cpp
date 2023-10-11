@@ -11,7 +11,7 @@ namespace Net
 
 Acceptor::Acceptor(EventLoop* loop, const InetAddress& listenAddr, bool reuseport)
     :loop_(loop),
-    acceptSocket_(createNonblocking(listenAddr.family())),
+    acceptSocket_(SockUtil::createNonblocking(listenAddr.family())),
     acceptChannel_(loop, acceptSocket_.getFd()),
     listening_(false),
     idleFd_(::open("/dev/null", O_RDONLY | O_CLOEXEC))
@@ -33,6 +33,7 @@ void Acceptor::listen()
 {
     listening_ = true;
     acceptSocket_.listen();
+    acceptChannel_.disableReading();
 }
 
 void Acceptor::handleRead()

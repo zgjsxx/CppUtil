@@ -15,6 +15,10 @@ class EventLoop;
 class Acceptor;
 class EventLoopThreadPool;
 
+class TcpConnection;
+using TcpConnectionPtr = std::shared_ptr<TcpConnection>;
+using ConnectionCallback = std::function<void (const TcpConnectionPtr&)> ;  
+
 class TcpServer : public Noncopyable
 {
 public:
@@ -24,6 +28,7 @@ public:
     kReusePort,
   };
   using ThreadInitCallback = std::function<void(EventLoop*)>;
+
   TcpServer(EventLoop* loop,
             const InetAddress& listenAddr,
             const std::string& nameArg,
@@ -40,6 +45,7 @@ private:
   std::shared_ptr<EventLoopThreadPool> threadPool_;
   ThreadInitCallback threadInitCallback_;
   std::atomic<int> started_;
+  int nextConnId_;
 
 };
 

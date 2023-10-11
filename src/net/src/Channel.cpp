@@ -1,5 +1,5 @@
 #include "net/include/Channel.h"
-
+#include "net/include/EventLoop.h"
 
 namespace CppUtil
 {
@@ -44,7 +44,8 @@ namespace Net
 
 Channel::Channel(EventLoop* loop, int fd)
     : loop_(loop),
-      fd_(fd)
+      fd_(fd),
+      index_(-1)
 {
 
 }
@@ -84,7 +85,13 @@ void Channel::handleEvent()
 void Channel::update()
 {
   addedToLoop_ = true;
-//   loop_->updateChannel(this);
+  loop_->updateChannel(this);
+}
+
+void Channel::remove()
+{
+    addedToLoop_ = false;
+    loop_->removeChannel(this);
 }
 
 }

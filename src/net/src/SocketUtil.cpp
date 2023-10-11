@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include "net/include/SocketUtil.h"
 
 namespace CppUtil {
@@ -54,6 +55,17 @@ int accept(int sockfd, struct sockaddr_in6* addr) {
 
   return connfd;
 }
+
+ssize_t read(int sockfd, void *buf, size_t count)
+{
+  return ::read(sockfd, buf, count);
+}
+
+ssize_t write(int sockfd, const void *buf, size_t count)
+{
+  return ::write(sockfd, buf, count);
+}
+
 
 }  // namespace Net
 }  // namespace CppUtil

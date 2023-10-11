@@ -27,6 +27,8 @@ class EpollMonitor {
    //add event/delete event
   void updateInterestEvent(int operation, Channel* channel);
   void updateChannel(Channel* channel);
+  void removeChannel(Channel* channel);
+  bool hasChannel(Channel* channel) const;
  private:
   using EventList = std::vector<struct epoll_event>;
   int epollfd_;

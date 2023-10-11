@@ -26,6 +26,10 @@ class EventLoop : public Noncopyable {
   void quit();
   void queueInLoop(const Functor& cb);
   void updateChannel(Channel* channel);
+  void removeChannel(Channel* channel);
+  void wakeup() ;
+  void handleRead();  // waked up
+  bool hasChannel(Channel* channel);
  private:
   using ChannelList =  std::vector<Channel*>;
   mutable std::mutex mtx_;

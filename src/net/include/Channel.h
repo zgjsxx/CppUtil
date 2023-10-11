@@ -33,10 +33,25 @@ class Channel : public Noncopyable {
 
   bool isNoneEvent() const { return events_ == kNoneEvent; }
 
+  void enableReading() { events_ |= kReadEvent; update(); }
+  void disableReading() { events_ &= ~kReadEvent; update(); }
+  void enableWriting() { events_ |= kWriteEvent; update(); }
+  void disableWriting() { events_ &= ~kWriteEvent; update(); }
+  void disableAll() { events_ = kNoneEvent; update(); }
+
+
+  bool isWriting() const { return events_ & kWriteEvent; }
+  bool isReading() const { return events_ & kReadEvent; }
+  
   // update interest event in evet loop
   void update();
+  int index() { return index_; }
+  void setIndex(int idx) { index_ = idx; }
 
   void setRevents(int revent) { revents_ = revent; } // used by pollers
+
+    EventLoop* ownerLoop() { return loop_; }
+    void remove();
 public:
   void handleEvent();
  private:
@@ -47,6 +62,7 @@ public:
   EventLoop* loop_;
   bool addedToLoop_{false};
   int fd_;
+  int index_{-1}; // used by Poller.
   int events_;   // event that we care about
   int revents_;  // ready event that we get
 };
