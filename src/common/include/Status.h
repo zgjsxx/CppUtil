@@ -3,7 +3,10 @@
 
 #include <string>
 
-namespace common{
+namespace CppUtil
+{
+
+namespace Common{
 class Status{
 public:
     Status() = default;
@@ -23,5 +26,6 @@ private:
     std::string msg_;
 };
 
+}
 }
 #endif
