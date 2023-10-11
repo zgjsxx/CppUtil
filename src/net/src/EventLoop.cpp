@@ -37,6 +37,11 @@ void EventLoop::runInLoop(const Functor& cb)
     cb();
 }
 
+void EventLoop::updateChannel(Channel* channel)
+{
+    sockMonitorPtr_->updateChannel(channel);
+}
+
 
 }
 }

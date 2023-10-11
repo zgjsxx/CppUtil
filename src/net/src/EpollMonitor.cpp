@@ -10,6 +10,11 @@ namespace CppUtil
 
 namespace Net
 {
+
+const int kNew = -1;
+const int kAdded = 1;
+const int kDeleted = 2;
+
 EpollMonitor::EpollMonitor(EventLoop* loop)
 {
 
@@ -65,6 +70,41 @@ void EpollMonitor::updateInterestEvent(int operation, Channel* channel)
     {
         //add log
     }
+}
+
+void EpollMonitor::updateChannel(Channel* channel)
+{
+    int index;
+    if(index == kNew || index == kDeleted){
+        int fd = channel->getFd();
+        if(index == kNew)
+        {
+            channels_[fd] = channel;
+        }
+        else
+        {
+
+        }
+        // channel->set_index(kAdded);
+        updateInterestEvent(EPOLL_CTL_ADD, channel);
+    }
+    else
+    {
+        // update existing one with EPOLL_CTL_MOD/DEL
+        int fd = channel->getFd();
+        (void)fd;
+
+        if (channel->isNoneEvent())
+        {
+            updateInterestEvent(EPOLL_CTL_DEL, channel);
+            // channel->set_index(kDeleted);
+        }
+        else
+        {
+            updateInterestEvent(EPOLL_CTL_MOD, channel);
+        }
+    }
+
 }
 
 } // namespace Net

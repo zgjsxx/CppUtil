@@ -25,7 +25,7 @@ class EventLoop : public Noncopyable {
   void runInLoop(const Functor& cb);
   void quit();
   void queueInLoop(const Functor& cb);
-
+  void updateChannel(Channel* channel);
  private:
   using ChannelList =  std::vector<Channel*>;
   mutable std::mutex mtx_;

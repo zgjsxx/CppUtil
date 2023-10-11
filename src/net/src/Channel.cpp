@@ -81,6 +81,11 @@ void Channel::handleEvent()
     }
 }
 
+void Channel::update()
+{
+  addedToLoop_ = true;
+//   loop_->updateChannel(this);
+}
 
 }
 };

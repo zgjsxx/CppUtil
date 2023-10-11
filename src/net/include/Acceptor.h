@@ -1,18 +1,6 @@
-// Copyright 2010, Shuo Chen.  All rights reserved.
-// http://code.google.com/p/muduo/
-//
-// Use of this source code is governed by a BSD-style license
-// that can be found in the License file.
-
-// Author: Shuo Chen (chenshuo at chenshuo dot com)
-//
-// This is an internal header file, you should not include this.
-
-#ifndef MUDUO_NET_ACCEPTOR_H
-#define MUDUO_NET_ACCEPTOR_H
+#pragma once
 
 #include <functional>
-
 #include "net/include/Channel.h"
 #include "net/include/Socket.h"
 
@@ -23,6 +11,7 @@ namespace Net
 
 class EventLoop;
 class InetAddress;
+
 ///
 /// Acceptor of incoming TCP connections.
 ///
@@ -48,6 +37,7 @@ class Acceptor : public Noncopyable
  private:
   void handleRead();
 
+  //Acceptor run in basic eventloop
   EventLoop* loop_{nullptr};
   Socket acceptSocket_;
   Channel acceptChannel_;
@@ -58,5 +48,3 @@ class Acceptor : public Noncopyable
 
 }  // namespace net
 }  // namespace muduo
-
-#endif  // MUDUO_NET_ACCEPTOR_H

@@ -31,7 +31,10 @@ class Channel : public Noncopyable {
 
   int getEvents() const {return events_;}
 
+  bool isNoneEvent() const { return events_ == kNoneEvent; }
 
+  // update interest event in evet loop
+  void update();
 
   void setRevents(int revent) { revents_ = revent; } // used by pollers
 public:
@@ -42,6 +45,7 @@ public:
   EventCallback closeCallback_;
   EventCallback errorCallback_;
   EventLoop* loop_;
+  bool addedToLoop_{false};
   int fd_;
   int events_;   // event that we care about
   int revents_;  // ready event that we get

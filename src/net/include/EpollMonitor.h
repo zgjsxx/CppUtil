@@ -2,6 +2,7 @@
 #define CPPUTIL_NET_MONITOR_H
 
 #include <vector>
+#include <map>
 #include "net/include/Channel.h"
 
 namespace CppUtil
@@ -25,10 +26,13 @@ class EpollMonitor {
                               ChannelList* activeChannels) const;
    //add event/delete event
   void updateInterestEvent(int operation, Channel* channel);
+  void updateChannel(Channel* channel);
  private:
   using EventList = std::vector<struct epoll_event>;
   int epollfd_;
   EventList events_;
+  using ChannelMap = std::map<int, Channel*> ;
+  ChannelMap channels_;
 };
 
 
