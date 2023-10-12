@@ -29,7 +29,7 @@ class TcpConnection : public Noncopyable,
   TcpConnection(EventLoop* loop, const std::string& name, int sockfd,
                 const InetAddress& localAddr, const InetAddress& peerAddr);
   ~TcpConnection();
-
+  enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
   EventLoop* getLoop() const { return loop_; }
   const std::string& name() const { return name_; }
   void setConnectionCallback(const ConnectionCallback& cb) {
@@ -44,13 +44,14 @@ class TcpConnection : public Noncopyable,
   void send(Buffer* buf);
   void sendInLoop(const void* data, size_t len);
   void sendInLoop(const StringPiece& message);
+  void setState(StateE s) { state_ = s; }
  private:
   void handleRead();
   void handleWrite();
   void handleClose();
 
  private:
-  enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
+
   EventLoop* loop_{nullptr};
   const std::string name_;
   StateE state_;  // FIXME: use atomic variable

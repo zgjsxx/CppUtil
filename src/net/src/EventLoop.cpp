@@ -8,7 +8,12 @@ namespace CppUtil {
 
 namespace Net {
 
-EventLoop::EventLoop() : threadId_(getCurrentTid()) {}
+EventLoop::EventLoop() 
+: threadId_(getCurrentTid()),
+  sockMonitorPtr_(new EpollMonitor(this)),
+  callingPendingFunctors_(false) {
+
+}
 
 EventLoop::~EventLoop() {}
 void EventLoop::loop() {

@@ -9,7 +9,21 @@ namespace Net {
 TcpConnection::TcpConnection(EventLoop* loop, const std::string& name,
                              int sockfd, const InetAddress& localAddr,
                              const InetAddress& peerAddr)
-    : loop_(loop), name_(name), localAddr_(localAddr), peerAddr_(peerAddr) {}
+    : loop_(loop), 
+    name_(name), 
+    localAddr_(localAddr), 
+    peerAddr_(peerAddr),
+    state_(kConnecting),
+    channel_(new Channel(loop, sockfd)){
+  channel_->setReadCallback(
+      std::bind(&TcpConnection::handleRead, this));
+  channel_->setWriteCallback(
+      std::bind(&TcpConnection::handleWrite, this));
+  channel_->setCloseCallback(
+      std::bind(&TcpConnection::handleClose, this));
+//   channel_->setErrorCallback(
+//       std::bind(&TcpConnection::handleError, this));        
+}
 
 TcpConnection::~TcpConnection()
 {}
@@ -66,6 +80,7 @@ void TcpConnection::handleClose() {
 void TcpConnection::connectEstablished() {
   //   setState(kConnected);
   //   channel_->tie(shared_from_this());
+  setState(kConnected);
   channel_->enableReading();
   connectionCallback_(shared_from_this());
 }

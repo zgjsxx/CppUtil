@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.17)
-project(CommonTest)
+project(NetTest)
 
 set(SOURCES 
-    Status_test.cpp  
-    ThreadPool_test.cpp  
-    Logger_test.cpp
+    TcpServer_test.cpp
 )
 
 string(REPLACE ".cpp" "" UNITTEST_BIN  "${SOURCES}")

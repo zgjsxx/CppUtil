@@ -29,6 +29,7 @@ class EpollMonitor {
 
  private:
   using EventList = std::vector<struct epoll_event>;
+  static const int kInitEventListSize = 16;
   int epollfd_;
   EventList events_;
   using ChannelMap = std::map<int, Channel*>;

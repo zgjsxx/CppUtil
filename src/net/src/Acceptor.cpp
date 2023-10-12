@@ -27,7 +27,7 @@ Acceptor::~Acceptor() { ::close(idleFd_); }
 void Acceptor::listen() {
   listening_ = true;
   acceptSocket_.listen();
-  acceptChannel_.disableReading();
+  acceptChannel_.enableReading();
 }
 
 void Acceptor::handleRead() {

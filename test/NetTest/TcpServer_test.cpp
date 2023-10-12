@@ -5,7 +5,7 @@
 #include "net/include/InetAddress.h"
 #include "net/include/TcpConnection.h"
 #include <utility>
-
+#include <iostream>
 #include <stdio.h>
 #include <unistd.h>
 
@@ -47,6 +47,7 @@ class EchoServer
   void onMessage(const TcpConnectionPtr& conn, Buffer* buf)
   {
     size_t len = buf->readableBytes();
+    std::cout << "len = " << len << std::endl;
     transferred_.fetch_add(len);
     receivedMessages_.fetch_add(1);
     conn->send(buf);
@@ -54,7 +55,6 @@ class EchoServer
 
   void printThroughput()
   {
-    // Timestamp endTime = Timestamp::now();
     int64_t newCounter = transferred_.load();
     int64_t bytes = newCounter - oldCounter_;
     // int64_t msgs = receivedMessages_.compare_exchange_strong(0, );
