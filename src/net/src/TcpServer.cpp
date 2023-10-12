@@ -10,13 +10,13 @@ namespace CppUtil {
 
 namespace Net {
 
-TcpServer::TcpServer(EventLoop* loop, const InetAddress& listenAddr,
-                     const std::string& name, Option option)
-    : loop_(loop),
+TcpServer::TcpServer(const InetAddress& listenAddr, const std::string& name,
+                     Option option)
+    : loop_(new EventLoop()),
       ipPort_(listenAddr.toIpPort()),
       name_(name),
-      acceptor_(new Acceptor(loop, listenAddr, option == kReusePort)),
-      threadPool_(new EventLoopThreadPool(loop, name_)),
+      acceptor_(new Acceptor(loop_, listenAddr, option == kReusePort)),
+      threadPool_(new EventLoopThreadPool(loop_, name_)),
       nextConnId_(-1) {
   auto newConnection = [this](int sockfd, const InetAddress& addr) {
     this->newConnection(sockfd, addr);
@@ -41,6 +41,7 @@ void TcpServer::setThreadNum(int numThreads) {
 void TcpServer::start() {
   threadPool_->start(threadInitCallback_);
   loop_->runInLoop(std::bind(&Acceptor::listen, acceptor_.get()));
+  loop_->loop();
 }
 
 void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {

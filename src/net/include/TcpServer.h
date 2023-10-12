@@ -29,8 +29,8 @@ class TcpServer : public Noncopyable {
   using MessageCallback = std::function<void(const TcpConnectionPtr&, Buffer*)>;
   using WriteCompleteCallback = std::function<void(const TcpConnectionPtr&)>;
 
-  TcpServer(EventLoop* loop, const InetAddress& listenAddr,
-            const std::string& name, Option option = kNoReusePort);
+  TcpServer(const InetAddress& listenAddr, const std::string& name,
+            Option option = kNoReusePort);
 
   ~TcpServer();
   const std::string& ipPort() const { return ipPort_; }
