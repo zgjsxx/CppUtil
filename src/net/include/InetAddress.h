@@ -21,7 +21,7 @@ class InetAddress {
   explicit InetAddress(const struct sockaddr_in& addr) : addr_(addr) {}
 
   explicit InetAddress(const struct sockaddr_in6& addr) : addr6_(addr) {}
-
+  void setSockAddrInet6(const struct sockaddr_in6& addr6) { addr6_ = addr6; }
   std::string toIp() const;
   std::string toIpPort() const;
   sa_family_t family() const { return addr_.sin_family; }

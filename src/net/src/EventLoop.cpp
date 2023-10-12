@@ -40,6 +40,19 @@ void EventLoop::handleRead() {
   }
 }
 
+void EventLoop::queueInLoop(const Functor& cb)
+{
+  {
+    std::unique_lock<std::mutex> lk(mtx_);
+    pendingFunctors_.push_back(std::move(cb));
+  }
+
+  if (!isInLoopThread() || callingPendingFunctors_)
+  {
+    wakeup();
+  }
+}
+
 void EventLoop::wakeup() {
   uint64_t one = 1;
   ssize_t n = SockUtil::write(wakeupFd_, &one, sizeof one);

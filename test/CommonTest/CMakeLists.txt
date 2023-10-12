@@ -5,6 +5,7 @@ set(SOURCES
     Status_test.cpp  
     ThreadPool_test.cpp  
     Logger_test.cpp
+    TcpServer_test.cpp
 )
 
 string(REPLACE ".cpp" "" UNITTEST_BIN  "${SOURCES}")
@@ -20,6 +21,7 @@ foreach(name ${UNITTEST_BIN})
     target_link_libraries(
         ${name} 
         vcommon
+        vnet
     )
     target_compile_options(${name} PRIVATE -std=c++17)
     

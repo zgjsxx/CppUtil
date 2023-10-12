@@ -11,6 +11,9 @@ TcpConnection::TcpConnection(EventLoop* loop, const std::string& name,
                              const InetAddress& peerAddr)
     : loop_(loop), name_(name), localAddr_(localAddr), peerAddr_(peerAddr) {}
 
+TcpConnection::~TcpConnection()
+{}
+
 void TcpConnection::handleRead() {
   int savedErrno = 0;
   ssize_t n = inputBuffer_.readFd(channel_->getFd(), &savedErrno);

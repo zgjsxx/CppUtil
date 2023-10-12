@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "common/include/Noncopyable.h"
+#include "common/include/Thread.h"
 
 namespace CppUtil {
 
@@ -31,6 +32,7 @@ class EventLoop : public Noncopyable {
   void wakeup();
   void handleRead();  // waked up
   bool hasChannel(Channel* channel);
+  bool isInLoopThread() const { return threadId_ == getCurrentTid(); }
 
  private:
   using ChannelList = std::vector<Channel*>;
@@ -41,6 +43,8 @@ class EventLoop : public Noncopyable {
   Channel* currentActiveChannel_{nullptr};
   int wakeupFd_{-1};
   int threadId_{-1};
+  bool callingPendingFunctors_; /* atomic */
+  std::vector<Functor> pendingFunctors_;
 };
 
 }  // namespace Net

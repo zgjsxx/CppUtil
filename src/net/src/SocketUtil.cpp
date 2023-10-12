@@ -46,6 +46,13 @@ void listen(int sockfd) {
   int ret = ::listen(sockfd, SOMAXCONN);
   // error
 }
+void close(int sockfd)
+{
+  if (::close(sockfd) < 0)
+  {
+    // LOG_SYSERR << "sockets::close";
+  }
+}
 
 int accept(int sockfd, struct sockaddr_in6* addr) {
   socklen_t addrlen = static_cast<socklen_t>(sizeof(struct sockaddr_in6));
