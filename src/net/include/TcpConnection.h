@@ -21,6 +21,7 @@ using MessageCallback = std::function<void(const TcpConnectionPtr&, Buffer*)>;
 using ConnectionCallback = std::function<void(const TcpConnectionPtr&)>;
 using CloseCallback = std::function<void(const TcpConnectionPtr&)>;
 using WriteCompleteCallback = std::function<void(const TcpConnectionPtr&)>;
+using HighWaterMarkCallback = std::function<void (const TcpConnectionPtr&, size_t)> ;
 
 class TcpConnection : public Noncopyable,
                       public std::enable_shared_from_this<TcpConnection> {
@@ -36,6 +37,8 @@ class TcpConnection : public Noncopyable,
   }
 
   void setMessageCallback(const MessageCallback& cb) { messageCallback_ = cb; }
+    void setHighWaterMarkCallback(const HighWaterMarkCallback& cb, size_t highWaterMark)
+  { highWaterMarkCallback_ = cb; highWaterMark_ = highWaterMark; }
   void connectEstablished();
   void connectDestroyed();
   void send(Buffer* buf);
@@ -57,6 +60,8 @@ class TcpConnection : public Noncopyable,
   MessageCallback messageCallback_;
   ConnectionCallback connectionCallback_;
   WriteCompleteCallback writeCompleteCallback_;
+  HighWaterMarkCallback highWaterMarkCallback_;   
+  size_t highWaterMark_;
   CloseCallback closeCallback_;
   std::unique_ptr<Socket> socket_;
   std::unique_ptr<Channel> channel_;

@@ -49,7 +49,7 @@ class EchoServer
     size_t len = buf->readableBytes();
     transferred_.fetch_add(len);
     receivedMessages_.fetch_add(1);
-    // conn->send(buf);
+    conn->send(buf);
   }
 
   void printThroughput()
