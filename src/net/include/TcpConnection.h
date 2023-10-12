@@ -38,7 +38,9 @@ class TcpConnection : public Noncopyable,
   void setMessageCallback(const MessageCallback& cb) { messageCallback_ = cb; }
   void connectEstablished();
   void connectDestroyed();
-
+  void send(Buffer* buf);
+  void sendInLoop(const void* data, size_t len);
+  void sendInLoop(const StringPiece& message);
  private:
   void handleRead();
   void handleWrite();
@@ -54,6 +56,7 @@ class TcpConnection : public Noncopyable,
   const InetAddress peerAddr_;
   MessageCallback messageCallback_;
   ConnectionCallback connectionCallback_;
+  WriteCompleteCallback writeCompleteCallback_;
   CloseCallback closeCallback_;
   std::unique_ptr<Socket> socket_;
   std::unique_ptr<Channel> channel_;
