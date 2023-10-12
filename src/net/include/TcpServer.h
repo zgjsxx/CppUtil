@@ -1,54 +1,84 @@
-#include <string>
-#include <memory>
 #include <atomic>
-#include "net/include/Acceptor.h"
+#include <map>
+#include <memory>
+#include <string>
+
 #include "common/include/Noncopyable.h"
+#include "net/include/Acceptor.h"
 
-namespace CppUtil
-{
+namespace CppUtil {
 
-namespace Net
-{
+namespace Net {
 
 class InetAddress;
 class EventLoop;
 class Acceptor;
 class EventLoopThreadPool;
-
+class Buffer;
 class TcpConnection;
 using TcpConnectionPtr = std::shared_ptr<TcpConnection>;
-using ConnectionCallback = std::function<void (const TcpConnectionPtr&)> ;  
+using ConnectionCallback = std::function<void(const TcpConnectionPtr&)>;
 
-class TcpServer : public Noncopyable
-{
-public:
-  enum Option
-  {
+class TcpServer : public Noncopyable {
+ public:
+  enum Option {
     kNoReusePort,
     kReusePort,
   };
   using ThreadInitCallback = std::function<void(EventLoop*)>;
+  using MessageCallback = std::function<void(const TcpConnectionPtr&, Buffer*)>;
+  using WriteCompleteCallback = std::function<void(const TcpConnectionPtr&)>;
 
-  TcpServer(EventLoop* loop,
-            const InetAddress& listenAddr,
-            const std::string& nameArg,
-            Option option = kNoReusePort);
+  TcpServer(EventLoop* loop, const InetAddress& listenAddr,
+            const std::string& name, Option option = kNoReusePort);
 
-  ~TcpServer(){};
+  ~TcpServer();
+  const std::string& ipPort() const { return ipPort_; }
+  const std::string& name() const { return name_; }
+  EventLoop* getLoop() const { return loop_; }
+  void setThreadNum(int numThreads);
+  void setThreadInitCallback(const ThreadInitCallback& cb) {
+    threadInitCallback_ = cb;
+  }
+  void setConnectionCallback(const ConnectionCallback& cb) {
+    connectionCallback_ = cb;
+  }
+  void setMessageCallback(const MessageCallback& cb) { messageCallback_ = cb; }
+
+  /// Set write complete callback.
+  /// Not thread safe.
+  void setWriteCompleteCallback(const WriteCompleteCallback& cb) {
+    writeCompleteCallback_ = cb;
+  }
+
+  std::shared_ptr<EventLoopThreadPool> threadPool() { return threadPool_; }
   void start();
 
-private:
+ private:
+  /// Not thread safe, but in loop
+  void newConnection(int sockfd, const InetAddress& peerAddr);
+  /// Thread safe.
+  void removeConnection(const TcpConnectionPtr& conn);
+  /// Not thread safe, but in loop
+  void removeConnectionInLoop(const TcpConnectionPtr& conn);
+
+ private:
+  using ConnectionMap = std::map<std::string, TcpConnectionPtr>;
+
   EventLoop* loop_{nullptr};
   const std::string ipPort_;
   const std::string name_;
   std::unique_ptr<Acceptor> acceptor_;
   std::shared_ptr<EventLoopThreadPool> threadPool_;
   ThreadInitCallback threadInitCallback_;
+  ConnectionCallback connectionCallback_;
+  MessageCallback messageCallback_;
+  WriteCompleteCallback writeCompleteCallback_;
   std::atomic<int> started_;
   int nextConnId_;
-
+  ConnectionMap connections_;
 };
 
 }  // namespace Net
 
-} // namespace CppUtil
+}  // namespace CppUtil

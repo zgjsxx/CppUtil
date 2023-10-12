@@ -1,17 +1,15 @@
 #include "net/include/Socket.h"
+
 #include "net/include/InetAddress.h"
 
-namespace CppUtil
-{
+namespace CppUtil {
 
-namespace Net
-{    
+namespace Net {
 
-void Socket::bind(const InetAddress& localaddr)
-{
-    // int ret = ::bind(sockfd_)
+void Socket::bind(const InetAddress& localaddr) {
+  // int ret = ::bind(sockfd_)
 }
 
-} // namespace Net
+}  // namespace Net
 
-} // namespace CppUtil
+}  // namespace CppUtil

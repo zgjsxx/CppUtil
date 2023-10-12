@@ -1,10 +1,11 @@
 #ifndef CPPUTIL_NET_EVENTLOOP_H
 #define CPPUTIL_NET_EVENTLOOP_H
-#include <mutex>
 #include <atomic>
-#include <vector>
-#include <memory>
 #include <functional>
+#include <memory>
+#include <mutex>
+#include <vector>
+
 #include "common/include/Noncopyable.h"
 
 namespace CppUtil {
@@ -27,11 +28,12 @@ class EventLoop : public Noncopyable {
   void queueInLoop(const Functor& cb);
   void updateChannel(Channel* channel);
   void removeChannel(Channel* channel);
-  void wakeup() ;
+  void wakeup();
   void handleRead();  // waked up
   bool hasChannel(Channel* channel);
+
  private:
-  using ChannelList =  std::vector<Channel*>;
+  using ChannelList = std::vector<Channel*>;
   mutable std::mutex mtx_;
   std::atomic<bool> quit_{false};
   ChannelList activeChannels_;
@@ -41,7 +43,7 @@ class EventLoop : public Noncopyable {
   int threadId_{-1};
 };
 
-}  // namespace net
+}  // namespace Net
 
 }  // namespace CppUtil
 
