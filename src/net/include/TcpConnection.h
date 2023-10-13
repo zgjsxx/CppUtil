@@ -48,6 +48,7 @@ class TcpConnection : public Noncopyable,
   void connectEstablished();
   void connectDestroyed();
   void send(Buffer* buf);
+  void send(const StringPiece& message);
   void sendInLoop(const void* data, size_t len);
   void sendInLoop(const StringPiece& message);
   void setState(StateE s) { state_ = s; }
@@ -55,7 +56,11 @@ class TcpConnection : public Noncopyable,
   const InetAddress& localAddress() const { return localAddr_; }
   const InetAddress& peerAddress() const { return peerAddr_; }
   void handleError();
-
+  void* getMutableContext()
+  { return context_; }
+  void setContext(void* context)
+  { context_ = context; }
+  void shutdown();
  private:
   void handleRead();
   void handleWrite();
@@ -76,7 +81,7 @@ class TcpConnection : public Noncopyable,
   size_t highWaterMark_;
   std::unique_ptr<Socket> socket_;
   std::unique_ptr<Channel> channel_;
-  std::any context_;
+  void* context_;
   Buffer inputBuffer_;
   Buffer outputBuffer_;
 };

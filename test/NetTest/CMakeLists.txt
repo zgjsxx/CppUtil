@@ -4,6 +4,7 @@ project(NetTest)
 set(SOURCES 
     TcpEchoServer_test.cpp
     TcpWebSocketServer_test.cpp
+    HttpServer_test.cpp
 )
 
 string(REPLACE ".cpp" "" UNITTEST_BIN  "${SOURCES}")

@@ -167,6 +167,37 @@ void TcpConnection::send(Buffer* buf) {
   }
 }
 
+void TcpConnection::send(const StringPiece& message)
+{
+  if (state_ == kConnected)
+  {
+    if (loop_->isInLoopThread())
+    {
+      sendInLoop(message);
+    }
+    else
+    {
+      void (TcpConnection::*fp)(const StringPiece& message) = &TcpConnection::sendInLoop;
+      loop_->runInLoop(
+          std::bind(fp,
+                    this,     // FIXME
+                    message.as_string()));
+                    //std::forward<string>(message)));
+    }
+  }
+}
+
+void TcpConnection::shutdown()
+{
+  // FIXME: use compare and swap
+  if (state_ == kConnected)
+  {
+    setState(kDisconnecting);
+    // FIXME: shared_from_this()?
+    loop_->runInLoop(std::bind(&TcpConnection::shutdownInLoop, this));
+  }
+}
+
 void TcpConnection::handleError() {
   int err = SockUtil::getSocketError(channel_->getFd());
 }

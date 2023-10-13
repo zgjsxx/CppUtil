@@ -7,7 +7,8 @@ project(
 )
 
 set(NET_SOURCES 
-    websocket/src/websocketParser.c
+    websocket/websocketParser.c
+    http/http_parser.c
     )
 
 

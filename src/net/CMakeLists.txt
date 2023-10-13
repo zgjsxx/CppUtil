@@ -19,6 +19,9 @@ set(NET_SOURCES
     src/EventLoopThreadPool.cpp
     src/Buffer.cpp
     src/TcpConnection.cpp
+    src/http/HttpContext.cpp
+    src/http/HttpServer.cpp
+    src/http/HttpResponse.cpp
     )
 
 

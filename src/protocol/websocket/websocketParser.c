@@ -1,4 +1,4 @@
-#include "protocol/websocket/include/websocketParser.h"
+#include "protocol/websocket/websocketParser.h"
 #include <assert.h>
 #include <string.h>
 

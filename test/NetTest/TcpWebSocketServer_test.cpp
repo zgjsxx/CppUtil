@@ -15,7 +15,7 @@
 #include "net/include/InetAddress.h"
 #include "net/include/TcpConnection.h"
 #include "net/include/TcpServer.h"
-#include "protocol/websocket/include/websocketParser.h"
+#include "protocol/websocket/websocketParser.h"
 
 using namespace CppUtil;
 using namespace CppUtil::Common;
@@ -34,15 +34,16 @@ int websocket_frame_header(websocket_parser* parser) {
 }
 
 int websocket_frame_body(websocket_parser* parser, const char* at,
-                         size_t size) {
-  if (parser->flags & WS_HAS_MASK) {
-    // if frame has mask, we have to copy and decode data via
-    // websocket_parser_copy_masked function
-    websocket_parser_decode(&parser->data->body[parser->offset], at, length,
-                            parser);
-  } else {
-    memcpy(&parser->data->body[parser->offset], at, length);
-  }
+                         size_t length) {
+  // if (parser->flags & WS_HAS_MASK) {
+  //   // if frame has mask, we have to copy and decode data via
+  //   // websocket_parser_copy_masked function
+  //   websocket_parser_decode((char*)(&parser->data[parser->offset], at, length,
+  //                           parser);
+  // } else {
+  //   memcpy((char*)&parser->data[parser->offset], at, length);
+  // }
+  // LOG_DEBUG("Body: %.*s", (int)length, at)
   return 0;
 }
 
@@ -69,6 +70,8 @@ class WebSocketServer {
     settings.on_frame_end = websocket_frame_end;
     parser = (websocket_parser*)malloc(sizeof(websocket_parser));
     websocket_parser_init(parser);
+    parser->data = (void*)this;
+
   }
   ~WebSocketServer() { free(parser); }
   void start() {
@@ -88,13 +91,15 @@ class WebSocketServer {
   void onMessage(const TcpConnectionPtr& conn, Buffer* buf) {
     size_t len = buf->readableBytes();
     std::cout << "len = " << len << std::endl;
+    LOG_DEBUG("data: %.*s", (int)len, buf->peek())
     transferred_.fetch_add(len);
     receivedMessages_.fetch_add(1);
+    //websocket is first http to handshake, so first prepare http
     size_t nread = websocket_parser_execute(parser, &settings, buf->peek(),
-                                            buf->readableBytes);
-    if (nread != data_len) {
-      // some callback return a value other than 0
-    }
+                                            len);
+    // if (nread != data_len) {
+    //   // some callback return a value other than 0
+    // }
     // conn->send(buf);
   }
 
@@ -116,13 +121,6 @@ class WebSocketServer {
 int main(int argc, char* argv[]) {
   if (argc > 1) {
     numThreads = atoi(argv[1]);
-  }
-
-  size_t nread;
-
-  nread = websocket_parser_execute(parser, &settings, data, data_len);
-  if (nread != data_len) {
-    // some callback return a value other than 0
   }
 
   CppUtil::Common::initLog("EchoServer.log");
