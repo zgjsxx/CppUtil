@@ -35,14 +35,14 @@ int websocket_frame_header(websocket_parser* parser) {
 
 int websocket_frame_body(websocket_parser* parser, const char* at,
                          size_t size) {
-  // if (parser->flags & WS_HAS_MASK) {
-  //   // if frame has mask, we have to copy and decode data via
-  //   // websocket_parser_copy_masked function
-  //   websocket_parser_decode(&parser->data->body[parser->offset], at, length,
-  //                           parser);
-  // } else {
-  //   memcpy(&parser->data->body[parser->offset], at, length);
-  // }
+  if (parser->flags & WS_HAS_MASK) {
+    // if frame has mask, we have to copy and decode data via
+    // websocket_parser_copy_masked function
+    websocket_parser_decode(&parser->data->body[parser->offset], at, length,
+                            parser);
+  } else {
+    memcpy(&parser->data->body[parser->offset], at, length);
+  }
   return 0;
 }
 
