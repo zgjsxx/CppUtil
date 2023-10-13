@@ -83,9 +83,11 @@ void TcpConnection::handleClose() {
 }
 
 void TcpConnection::connectEstablished() {
-  //   channel_->tie(shared_from_this());
+  channel_->tie(shared_from_this());
   setState(kConnected);
   channel_->enableReading();
+
+  // do some extra work from user set
   connectionCallback_(shared_from_this());
 }
 

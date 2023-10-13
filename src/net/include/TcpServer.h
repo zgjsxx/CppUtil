@@ -1,6 +1,7 @@
 #include <atomic>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 
 #include "common/include/Noncopyable.h"
@@ -55,6 +56,9 @@ class TcpServer : public Noncopyable {
   std::shared_ptr<EventLoopThreadPool> threadPool() { return threadPool_; }
   void start();
 
+  // used for statistics
+  int getConnectionNum() const;
+
  private:
   /// Not thread safe, but in loop
   void newConnection(int sockfd, const InetAddress& peerAddr);
@@ -76,6 +80,7 @@ class TcpServer : public Noncopyable {
   std::atomic<int> started_{-1};
   int nextConnId_{-1};
   ConnectionMap connections_;
+  mutable std::mutex mtx_;
 };
 
 }  // namespace Net

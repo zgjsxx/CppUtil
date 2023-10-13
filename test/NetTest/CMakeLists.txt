@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.17)
 project(NetTest)
 
 set(SOURCES 
-    TcpServer_test.cpp
+    TcpEchoServer_test.cpp
+    TcpWebSocketServer_test.cpp
 )
 
 string(REPLACE ".cpp" "" UNITTEST_BIN  "${SOURCES}")
@@ -19,6 +20,7 @@ foreach(name ${UNITTEST_BIN})
         ${name} 
         vcommon
         vnet
+        vprotocol
     )
     target_compile_options(${name} PRIVATE -std=c++17)
     

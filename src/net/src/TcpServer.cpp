@@ -56,12 +56,17 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
   // FIXME use make_shared if necessary
   TcpConnectionPtr conn(
       new TcpConnection(ioloop, connName, sockfd, localAddr, peerAddr));
-  connections_[connName] = conn;
+
   conn->setConnectionCallback(connectionCallback_);
   conn->setMessageCallback(messageCallback_);
   //   conn->setWriteCompleteCallback(writeCompleteCallback_);
   conn->setCloseCallback(
       [this](const TcpConnectionPtr& cb) { this->removeConnection(cb); });
+  {
+    std::unique_lock<std::mutex> lk(mtx_);
+    connections_[connName] = conn;
+  }
+
   ioloop->runInLoop(std::bind(&TcpConnection::connectEstablished, conn));
 }
 
@@ -72,10 +77,19 @@ void TcpServer::removeConnection(const TcpConnectionPtr& conn) {
 /// Not thread safe, but in loop
 void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& conn) {
   LOG_DEBUG("%s", "remove connection")
-  size_t n = connections_.erase(conn->name());
-  (void)n;
+
+  {
+    std::unique_lock<std::mutex> lk(mtx_);
+    connections_.erase(conn->name());
+  }
+
   auto loopPtr = conn->getLoop();
   loopPtr->queueInLoop(std::bind(&TcpConnection::connectDestroyed, conn));
+}
+
+int TcpServer::getConnectionNum() const {
+  std::unique_lock<std::mutex> lk(mtx_);
+  return connections_.size();
 }
 
 }  // namespace Net
