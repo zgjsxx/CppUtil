@@ -13,6 +13,7 @@ set(COMMON_SOURCES
     src/ProcessInfo.cpp
     src/CountDownLatch.cpp
     src/Logger.cpp
+    src/SystemInfo.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED)

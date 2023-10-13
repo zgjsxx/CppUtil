@@ -21,7 +21,7 @@ EventLoopThread::~EventLoopThread() {
   }
 }
 
-EventLoop* EventLoopThread::startLoop() {
+EventLoop* EventLoopThread::waitThreadStart() {
   thread_.start();
   EventLoop* loop = nullptr;
   {

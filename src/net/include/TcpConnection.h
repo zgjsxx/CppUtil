@@ -21,7 +21,8 @@ using MessageCallback = std::function<void(const TcpConnectionPtr&, Buffer*)>;
 using ConnectionCallback = std::function<void(const TcpConnectionPtr&)>;
 using CloseCallback = std::function<void(const TcpConnectionPtr&)>;
 using WriteCompleteCallback = std::function<void(const TcpConnectionPtr&)>;
-using HighWaterMarkCallback = std::function<void (const TcpConnectionPtr&, size_t)> ;
+using HighWaterMarkCallback =
+    std::function<void(const TcpConnectionPtr&, size_t)>;
 
 class TcpConnection : public Noncopyable,
                       public std::enable_shared_from_this<TcpConnection> {
@@ -36,22 +37,31 @@ class TcpConnection : public Noncopyable,
     connectionCallback_ = cb;
   }
 
+  void shutdownInLoop();
+  void setCloseCallback(const CloseCallback& cb) { closeCallback_ = cb; }
   void setMessageCallback(const MessageCallback& cb) { messageCallback_ = cb; }
-    void setHighWaterMarkCallback(const HighWaterMarkCallback& cb, size_t highWaterMark)
-  { highWaterMarkCallback_ = cb; highWaterMark_ = highWaterMark; }
+  void setHighWaterMarkCallback(const HighWaterMarkCallback& cb,
+                                size_t highWaterMark) {
+    highWaterMarkCallback_ = cb;
+    highWaterMark_ = highWaterMark;
+  }
   void connectEstablished();
   void connectDestroyed();
   void send(Buffer* buf);
   void sendInLoop(const void* data, size_t len);
   void sendInLoop(const StringPiece& message);
   void setState(StateE s) { state_ = s; }
+  bool connected() const { return state_ == kConnected; }
+  const InetAddress& localAddress() const { return localAddr_; }
+  const InetAddress& peerAddress() const { return peerAddr_; }
+  void handleError();
+
  private:
   void handleRead();
   void handleWrite();
   void handleClose();
 
  private:
-
   EventLoop* loop_{nullptr};
   const std::string name_;
   StateE state_;  // FIXME: use atomic variable
@@ -61,9 +71,9 @@ class TcpConnection : public Noncopyable,
   MessageCallback messageCallback_;
   ConnectionCallback connectionCallback_;
   WriteCompleteCallback writeCompleteCallback_;
-  HighWaterMarkCallback highWaterMarkCallback_;   
-  size_t highWaterMark_;
+  HighWaterMarkCallback highWaterMarkCallback_;
   CloseCallback closeCallback_;
+  size_t highWaterMark_;
   std::unique_ptr<Socket> socket_;
   std::unique_ptr<Channel> channel_;
   std::any context_;

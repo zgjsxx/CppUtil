@@ -4,9 +4,10 @@ cppUtil
 clang-format -style=file -i main.cc
 
 common module includes:
-- thread pool
-- logger
-- status
+- Thread pool
+- Logger
+- Status
+- SystemInfo
 
 net module include
 - TcpServer

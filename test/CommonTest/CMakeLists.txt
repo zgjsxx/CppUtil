@@ -5,6 +5,7 @@ set(SOURCES
     Status_test.cpp  
     ThreadPool_test.cpp  
     Logger_test.cpp
+    SystemInfo_test.cpp
 )
 
 string(REPLACE ".cpp" "" UNITTEST_BIN  "${SOURCES}")

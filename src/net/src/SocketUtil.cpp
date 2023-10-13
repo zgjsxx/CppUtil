@@ -1,5 +1,6 @@
 #include "net/include/SocketUtil.h"
 
+#include <netinet/tcp.h>
 #include <unistd.h>
 
 #include <cstring>
@@ -46,10 +47,8 @@ void listen(int sockfd) {
   int ret = ::listen(sockfd, SOMAXCONN);
   // error
 }
-void close(int sockfd)
-{
-  if (::close(sockfd) < 0)
-  {
+void close(int sockfd) {
+  if (::close(sockfd) < 0) {
     // LOG_SYSERR << "sockets::close";
   }
 }
@@ -77,6 +76,13 @@ ssize_t write(int sockfd, const void* buf, size_t count) {
 
 ssize_t readv(int sockfd, const struct iovec* iov, int iovcnt) {
   return ::readv(sockfd, iov, iovcnt);
+}
+
+int setTcpNoDelay(int sockfd, bool on) {
+  int optval = on ? 1 : 0;
+  int ret = ::setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, &optval,
+                         static_cast<socklen_t>(sizeof(optval)));
+  return ret;
 }
 
 struct sockaddr_in6 getLocalAddr(int sockfd) {
@@ -119,6 +125,22 @@ void toIpPort(char* buf, size_t size, const struct sockaddr* addr) {
       reinterpret_cast<const struct sockaddr_in*>(addr);
   uint16_t port = networkToHost16(addr4->sin_port);
   snprintf(buf + end, size - end, ":%u", port);
+}
+
+int getSocketError(int sockfd) {
+  int optval;
+  socklen_t optlen = static_cast<socklen_t>(sizeof optval);
+
+  if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) < 0) {
+    return errno;
+  } else {
+    return optval;
+  }
+}
+
+void shutdownWrite(int sockfd) {
+  if (::shutdown(sockfd, SHUT_WR) < 0) {
+  }
 }
 
 }  // namespace SockUtil

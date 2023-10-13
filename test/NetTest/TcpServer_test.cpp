@@ -6,6 +6,7 @@
 #include <iostream>
 #include <utility>
 
+#include "common/include/Logger.h"
 #include "common/include/Thread.h"
 #include "net/include/Buffer.h"
 #include "net/include/EventLoop.h"
@@ -15,7 +16,7 @@
 using namespace CppUtil;
 using namespace CppUtil::Net;
 using namespace std::placeholders;
-int numThreads = 0;
+int numThreads = 8;
 
 class EchoServer {
  public:
@@ -29,15 +30,15 @@ class EchoServer {
   }
 
   void start() {
-    // LOG_INFO << "starting " << numThreads << " threads.";
+    LOG_INFO("starting %d threads", numThreads);
     server_.start();
   }
 
  private:
   void onConnection(const TcpConnectionPtr& conn) {
-    // LOG_TRACE << conn->peerAddress().toIpPort() << " -> "
-    //     << conn->localAddress().toIpPort() << " is "
-    //     << (conn->connected() ? "UP" : "DOWN");
+    LOG_DEBUG("%s -> %s is %s", conn->peerAddress().toIpPort().c_str(),
+              conn->localAddress().toIpPort().c_str(),
+              conn->connected() ? "UP" : "DOWN")
     // conn->setTcpNoDelay(true);
   }
 
@@ -70,10 +71,11 @@ class EchoServer {
 };
 
 int main(int argc, char* argv[]) {
-  //   LOG_INFO << "pid = " << getpid() << ", tid = " << CurrentThread::tid();
   if (argc > 1) {
     numThreads = atoi(argv[1]);
   }
+  CppUtil::Common::initLog("EchoServer.log");
+  LOG_DEBUG("%s", "init log")
   InetAddress listenAddr(2007);
   EchoServer server(listenAddr);
   server.start();

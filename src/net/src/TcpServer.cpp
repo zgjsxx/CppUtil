@@ -2,6 +2,7 @@
 
 #include <functional>
 
+#include "common/include/Logger.h"
 #include "net/include/EventLoop.h"
 #include "net/include/EventLoopThreadPool.h"
 #include "net/include/TcpConnection.h"
@@ -18,10 +19,10 @@ TcpServer::TcpServer(const InetAddress& listenAddr, const std::string& name,
       acceptor_(new Acceptor(loop_, listenAddr, option == kReusePort)),
       threadPool_(new EventLoopThreadPool(loop_, name_)),
       nextConnId_(-1) {
-  auto newConnection = [this](int sockfd, const InetAddress& addr) {
-    this->newConnection(sockfd, addr);
-  };
-  acceptor_->setNewConnectionCallback(newConnection);
+  acceptor_->setNewConnectionCallback(
+      [this](int sockfd, const InetAddress& addr) {
+        this->newConnection(sockfd, addr);
+      });
 }
 
 TcpServer::~TcpServer() {
@@ -59,6 +60,8 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) {
   conn->setConnectionCallback(connectionCallback_);
   conn->setMessageCallback(messageCallback_);
   //   conn->setWriteCompleteCallback(writeCompleteCallback_);
+  conn->setCloseCallback(
+      [this](const TcpConnectionPtr& cb) { this->removeConnection(cb); });
   ioloop->runInLoop(std::bind(&TcpConnection::connectEstablished, conn));
 }
 
@@ -68,6 +71,7 @@ void TcpServer::removeConnection(const TcpConnectionPtr& conn) {
 
 /// Not thread safe, but in loop
 void TcpServer::removeConnectionInLoop(const TcpConnectionPtr& conn) {
+  LOG_DEBUG("%s", "remove connection")
   size_t n = connections_.erase(conn->name());
   (void)n;
   auto loopPtr = conn->getLoop();

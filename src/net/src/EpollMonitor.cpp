@@ -1,8 +1,12 @@
+#include "net/include/EpollMonitor.h"
+
 #include <errno.h>
 #include <unistd.h>
+
 #include <cstring>
 #include <iostream>
-#include "net/include/EpollMonitor.h"
+
+#include "common/include/Logger.h"
 
 namespace CppUtil {
 
@@ -13,9 +17,7 @@ const int kAdded = 1;
 const int kDeleted = 2;
 
 EpollMonitor::EpollMonitor(EventLoop* loop)
-: epollfd_(::epoll_create1(EPOLL_CLOEXEC)),
-  events_(kInitEventListSize)
-{}
+    : epollfd_(::epoll_create1(EPOLL_CLOEXEC)), events_(kInitEventListSize) {}
 
 EpollMonitor::~EpollMonitor() { ::close(epollfd_); }
 
@@ -24,7 +26,7 @@ void EpollMonitor::poll(int timeoutMs, ChannelList* activeChannels) {
                                static_cast<int>(events_.size()), timeoutMs);
   int savedErrno = errno;
   if (numEvents > 0) {
-    std::cout << "new events" << std::endl;
+    LOG_DEBUG("%s", "new events comming")
     fillActiveChannels(numEvents, activeChannels);
     if ((size_t)numEvents == events_.size()) {
       events_.resize(events_.size() * 2);

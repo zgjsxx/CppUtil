@@ -17,7 +17,7 @@ class Socket : public Noncopyable {
   void bind(const InetAddress& localaddr);
   void listen();
   int accept(InetAddress* peeraddr);
-
+  void shutdownWrite();
   /// Enable/disable SO_REUSEADDR
   ///
   void setReuseAddr(bool on);

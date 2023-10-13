@@ -22,8 +22,10 @@ class Channel : public Noncopyable {
  public:
   using EventCallback = std::function<void()>;
   Channel(EventLoop* loop, int fd);
+  ~Channel() = default;
 
  public:
+  // callbacks in Channel is set by TcpConnection constructor
   void setReadCallback(EventCallback cb) { readCallback_ = std::move(cb); }
   void setWriteCallback(EventCallback cb) { writeCallback_ = std::move(cb); }
   void setCloseCallback(EventCallback cb) { closeCallback_ = std::move(cb); }

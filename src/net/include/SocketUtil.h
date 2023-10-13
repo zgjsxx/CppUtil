@@ -22,7 +22,7 @@ void convertIpAddress(const std::string& ip, uint16_t port,
 
 void convertIpAddress(const std::string& ip, uint16_t port,
                       struct sockaddr_in6* addr);
-int accept(int sockfd, struct sockaddr_in6* addr) ;
+int accept(int sockfd, struct sockaddr_in6* addr);
 ssize_t read(int sockfd, void* buf, size_t count);
 
 ssize_t readv(int sockfd, const struct iovec* iov, int iovcnt);
@@ -33,6 +33,11 @@ struct sockaddr_in6 getLocalAddr(int sockfd);
 
 void toIpPort(char* buf, size_t size, const struct sockaddr* addr);
 void toIp(char* buf, size_t size, const struct sockaddr* addr);
+
+int setTcpNoDelay(int sockfd, bool on);
+int getSocketError(int sockfd);
+
+void shutdownWrite(int sockfd);
 
 inline uint64_t hostToNetwork64(uint64_t host64) { return htobe64(host64); }
 

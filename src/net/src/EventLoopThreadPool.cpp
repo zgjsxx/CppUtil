@@ -1,5 +1,7 @@
 #include "net/include/EventLoopThreadPool.h"
 
+#include "common/include/Logger.h"
+#include "common/include/SystemInfo.h"
 #include "net/include/EventLoop.h"
 #include "net/include/EventLoopThread.h"
 
@@ -11,7 +13,7 @@ EventLoopThreadPool::EventLoopThreadPool(EventLoop* baseloop,
     : baseLoop_(baseloop),
       name_(name),
       started_(false),
-      numThreads_(0),
+      numThreads_(Common::getCpuNum() * 2),
       next_(0) {}
 
 EventLoopThreadPool::~EventLoopThreadPool() {
@@ -21,12 +23,14 @@ EventLoopThreadPool::~EventLoopThreadPool() {
 
 void EventLoopThreadPool::start(const ThreadInitCallback& cb) {
   started_ = true;
+  LOG_DEBUG("num of thread = %d", numThreads_)
   for (int i = 0; i < numThreads_; ++i) {
     char buf[name_.size() + 32] = {0};
     snprintf(buf, sizeof(buf), "%s%d", name_.c_str(), i);
     EventLoopThread* t = new EventLoopThread(cb, buf);
     threads_.emplace_back(std::unique_ptr<EventLoopThread>(t));
-    loops_.emplace_back(t->startLoop());
+    loops_.emplace_back(t->waitThreadStart());
+    LOG_DEBUG("%s", "thread starts")
   }
 
   if (numThreads_ == 0 && cb) {
