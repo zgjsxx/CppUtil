@@ -8,11 +8,11 @@
 #include "common/include/Logger.h"
 #include "common/include/Thread.h"
 #include "common/include/ThreadPool.h"
-#include "net/include/Buffer.h"
-#include "net/include/EventLoop.h"
-#include "net/include/InetAddress.h"
-#include "net/include/TcpConnection.h"
-#include "net/include/TcpServer.h"
+#include "net/serverBase/include/Buffer.h"
+#include "net/serverBase/include/EventLoop.h"
+#include "net/serverBase/include/InetAddress.h"
+#include "net/serverBase/include/TcpConnection.h"
+#include "net/serverBase/include/TcpServer.h"
 
 using namespace CppUtil;
 using namespace CppUtil::Common;

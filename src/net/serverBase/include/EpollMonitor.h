@@ -1,10 +1,12 @@
 #ifndef CPPUTIL_NET_MONITOR_H
 #define CPPUTIL_NET_MONITOR_H
 
+#include <sys/epoll.h>
+
 #include <map>
 #include <vector>
-#include <sys/epoll.h>
-#include "net/include/Channel.h"
+
+#include "net/serverBase/include/Channel.h"
 
 namespace CppUtil {
 

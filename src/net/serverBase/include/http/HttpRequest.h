@@ -1,80 +1,50 @@
 #pragma once
-#include "common/include/Noncopyable.h"
-#include <map>
 #include <assert.h>
 #include <stdio.h>
+
+#include <map>
 #include <string>
+
+#include "common/include/Noncopyable.h"
 using std::string;
-namespace CppUtil
-{
-namespace Net
-{
+namespace CppUtil {
+namespace Net {
 
-class HttpRequest : public Noncopyable
-{
+class HttpRequest : public Noncopyable {
  public:
-  enum Method
-  {
-    kInvalid, kGet, kPost, kHead, kPut, kDelete
-  };
-  enum Version
-  {
-    kUnknown, kHttp10, kHttp11
-  };
+  enum Method { kInvalid, kGet, kPost, kHead, kPut, kDelete };
+  enum Version { kUnknown, kHttp10, kHttp11 };
 
-  HttpRequest()
-    : method_(kInvalid),
-      version_(kUnknown)
-  {
-  }
+  HttpRequest() : method_(kInvalid), version_(kUnknown) {}
 
-  void setVersion(Version v)
-  {
-    version_ = v;
-  }
+  void setVersion(Version v) { version_ = v; }
 
-  Version getVersion() const
-  { return version_; }
+  Version getVersion() const { return version_; }
 
-  bool setMethod(const char* start, const char* end)
-  {
+  bool setMethod(const char* start, const char* end) {
     assert(method_ == kInvalid);
     string m(start, end);
-    if (m == "GET")
-    {
+    if (m == "GET") {
       method_ = kGet;
-    }
-    else if (m == "POST")
-    {
+    } else if (m == "POST") {
       method_ = kPost;
-    }
-    else if (m == "HEAD")
-    {
+    } else if (m == "HEAD") {
       method_ = kHead;
-    }
-    else if (m == "PUT")
-    {
+    } else if (m == "PUT") {
       method_ = kPut;
-    }
-    else if (m == "DELETE")
-    {
+    } else if (m == "DELETE") {
       method_ = kDelete;
-    }
-    else
-    {
+    } else {
       method_ = kInvalid;
     }
     return method_ != kInvalid;
   }
 
-  Method method() const
-  { return method_; }
+  Method method() const { return method_; }
 
-  const char* methodString() const
-  {
+  const char* methodString() const {
     const char* result = "UNKNOWN";
-    switch(method_)
-    {
+    switch (method_) {
       case kGet:
         result = "GET";
         break;
@@ -96,21 +66,15 @@ class HttpRequest : public Noncopyable
     return result;
   }
 
-  void setPath(const char* start, const char* end)
-  {
-    path_.assign(start, end);
-  }
+  void setPath(const char* start, const char* end) { path_.assign(start, end); }
 
-  const string& path() const
-  { return path_; }
+  const string& path() const { return path_; }
 
-  void setQuery(const char* start, const char* end)
-  {
+  void setQuery(const char* start, const char* end) {
     query_.assign(start, end);
   }
 
-  const string& query() const
-  { return query_; }
+  const string& query() const { return query_; }
 
   // void setReceiveTime(Timestamp t)
   // { receiveTime_ = t; }
@@ -118,38 +82,31 @@ class HttpRequest : public Noncopyable
   // Timestamp receiveTime() const
   // { return receiveTime_; }
 
-  void addHeader(const char* start, const char* colon, const char* end)
-  {
+  void addHeader(const char* start, const char* colon, const char* end) {
     string field(start, colon);
     ++colon;
-    while (colon < end && isspace(*colon))
-    {
+    while (colon < end && isspace(*colon)) {
       ++colon;
     }
     string value(colon, end);
-    while (!value.empty() && isspace(value[value.size()-1]))
-    {
-      value.resize(value.size()-1);
+    while (!value.empty() && isspace(value[value.size() - 1])) {
+      value.resize(value.size() - 1);
     }
     headers_[field] = value;
   }
 
-  string getHeader(const string& field) const
-  {
+  string getHeader(const string& field) const {
     string result;
     std::map<string, string>::const_iterator it = headers_.find(field);
-    if (it != headers_.end())
-    {
+    if (it != headers_.end()) {
       result = it->second;
     }
     return result;
   }
 
-  const std::map<string, string>& headers() const
-  { return headers_; }
+  const std::map<string, string>& headers() const { return headers_; }
 
-  void swap(HttpRequest& that)
-  {
+  void swap(HttpRequest& that) {
     std::swap(method_, that.method_);
     std::swap(version_, that.version_);
     path_.swap(that.path_);
@@ -157,15 +114,18 @@ class HttpRequest : public Noncopyable
     // receiveTime_.swap(that.receiveTime_);
     headers_.swap(that.headers_);
   }
+  void setUrl(const std::string& url) { url_ = url; }
+  std::string getUrl() const { return url_; }
 
  private:
   Method method_;
   Version version_;
   string path_;
   string query_;
+  std::string url_;
   // Timestamp receiveTime_;
   std::map<string, string> headers_;
 };
 
-}  // namespace net
-}  // namespace muduo
+}  // namespace Net
+}  // namespace CppUtil

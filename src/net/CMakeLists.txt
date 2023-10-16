@@ -7,21 +7,23 @@ project(
 )
 
 set(NET_SOURCES 
-    src/EventLoop.cpp
-    src/EpollMonitor.cpp
-    src/Channel.cpp
-    src/InetAddress.cpp
-    src/SocketUtil.cpp
-    src/TcpServer.cpp
-    src/Socket.cpp
-    src/Acceptor.cpp
-    src/EventLoopThread.cpp
-    src/EventLoopThreadPool.cpp
-    src/Buffer.cpp
-    src/TcpConnection.cpp
-    src/http/HttpContext.cpp
-    src/http/HttpServer.cpp
-    src/http/HttpResponse.cpp
+    serverBase/src/EventLoop.cpp
+    serverBase/src/EpollMonitor.cpp
+    serverBase/src/Channel.cpp
+    serverBase/src/InetAddress.cpp
+    serverBase/src/SocketUtil.cpp
+    serverBase/src/TcpServer.cpp
+    serverBase/src/Socket.cpp
+    serverBase/src/Acceptor.cpp
+    serverBase/src/EventLoopThread.cpp
+    serverBase/src/EventLoopThreadPool.cpp
+    serverBase/src/Buffer.cpp
+    serverBase/src/TcpConnection.cpp
+    serverBase/src/http/HttpServer.cpp
+    serverBase/src/http/HttpResponse.cpp
+    serverBase/src/http/HttpParser.cpp
+    protocol/http/http_parser.c
+    protocol/websocket/websocketParser.c
     )
 
 

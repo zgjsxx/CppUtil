@@ -1,11 +1,11 @@
-#include "net/include/TcpServer.h"
+#include "net/serverBase/include/TcpServer.h"
 
 #include <functional>
 
 #include "common/include/Logger.h"
-#include "net/include/EventLoop.h"
-#include "net/include/EventLoopThreadPool.h"
-#include "net/include/TcpConnection.h"
+#include "net/serverBase/include/EventLoop.h"
+#include "net/serverBase/include/EventLoopThreadPool.h"
+#include "net/serverBase/include/TcpConnection.h"
 
 namespace CppUtil {
 

@@ -1,9 +1,9 @@
-#include "net/include/TcpConnection.h"
+#include "net/serverBase/include/TcpConnection.h"
 
 #include "common/include/Logger.h"
-#include "net/include/Channel.h"
-#include "net/include/EventLoop.h"
-#include "net/include/Socket.h"
+#include "net/serverBase/include/Channel.h"
+#include "net/serverBase/include/EventLoop.h"
+#include "net/serverBase/include/Socket.h"
 
 namespace CppUtil {
 namespace Net {
@@ -16,6 +16,7 @@ TcpConnection::TcpConnection(EventLoop* loop, const std::string& name,
       localAddr_(localAddr),
       peerAddr_(peerAddr),
       state_(kConnecting),
+      socket_(new Socket(sockfd)),
       channel_(new Channel(loop, sockfd)) {
   // TcpConnection is created by Acceptor
   // channel's callback is set by TcpConnection
@@ -167,31 +168,24 @@ void TcpConnection::send(Buffer* buf) {
   }
 }
 
-void TcpConnection::send(const StringPiece& message)
-{
-  if (state_ == kConnected)
-  {
-    if (loop_->isInLoopThread())
-    {
+void TcpConnection::send(const StringPiece& message) {
+  if (state_ == kConnected) {
+    if (loop_->isInLoopThread()) {
       sendInLoop(message);
-    }
-    else
-    {
-      void (TcpConnection::*fp)(const StringPiece& message) = &TcpConnection::sendInLoop;
-      loop_->runInLoop(
-          std::bind(fp,
-                    this,     // FIXME
-                    message.as_string()));
-                    //std::forward<string>(message)));
+    } else {
+      void (TcpConnection::*fp)(const StringPiece& message) =
+          &TcpConnection::sendInLoop;
+      loop_->runInLoop(std::bind(fp,
+                                 this,  // FIXME
+                                 message.as_string()));
+      // std::forward<string>(message)));
     }
   }
 }
 
-void TcpConnection::shutdown()
-{
+void TcpConnection::shutdown() {
   // FIXME: use compare and swap
-  if (state_ == kConnected)
-  {
+  if (state_ == kConnected) {
     setState(kDisconnecting);
     // FIXME: shared_from_this()?
     loop_->runInLoop(std::bind(&TcpConnection::shutdownInLoop, this));

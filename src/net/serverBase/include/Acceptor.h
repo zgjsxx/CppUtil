@@ -2,8 +2,8 @@
 
 #include <functional>
 
-#include "net/include/Channel.h"
-#include "net/include/Socket.h"
+#include "net/serverBase/include/Channel.h"
+#include "net/serverBase/include/Socket.h"
 
 namespace CppUtil {
 namespace Net {

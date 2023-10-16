@@ -5,8 +5,8 @@
 #include <string>
 
 #include "common/include/Noncopyable.h"
-#include "net/include/Buffer.h"
-#include "net/include/InetAddress.h"
+#include "net/serverBase/include/Buffer.h"
+#include "net/serverBase/include/InetAddress.h"
 
 namespace CppUtil {
 namespace Net {
@@ -56,11 +56,10 @@ class TcpConnection : public Noncopyable,
   const InetAddress& localAddress() const { return localAddr_; }
   const InetAddress& peerAddress() const { return peerAddr_; }
   void handleError();
-  void* getMutableContext()
-  { return context_; }
-  void setContext(void* context)
-  { context_ = context; }
+  void* getMutableContext() { return context_; }
+  void setContext(void* context) { context_ = context; }
   void shutdown();
+
  private:
   void handleRead();
   void handleWrite();

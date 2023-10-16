@@ -10,12 +10,12 @@
 #include "common/include/Logger.h"
 #include "common/include/Thread.h"
 #include "common/include/ThreadPool.h"
-#include "net/include/Buffer.h"
-#include "net/include/EventLoop.h"
-#include "net/include/InetAddress.h"
-#include "net/include/TcpConnection.h"
-#include "net/include/TcpServer.h"
-#include "protocol/websocket/websocketParser.h"
+#include "net/protocol/websocket/websocketParser.h"
+#include "net/serverBase/include/Buffer.h"
+#include "net/serverBase/include/EventLoop.h"
+#include "net/serverBase/include/InetAddress.h"
+#include "net/serverBase/include/TcpConnection.h"
+#include "net/serverBase/include/TcpServer.h"
 
 using namespace CppUtil;
 using namespace CppUtil::Common;
@@ -38,7 +38,8 @@ int websocket_frame_body(websocket_parser* parser, const char* at,
   // if (parser->flags & WS_HAS_MASK) {
   //   // if frame has mask, we have to copy and decode data via
   //   // websocket_parser_copy_masked function
-  //   websocket_parser_decode((char*)(&parser->data[parser->offset], at, length,
+  //   websocket_parser_decode((char*)(&parser->data[parser->offset], at,
+  //   length,
   //                           parser);
   // } else {
   //   memcpy((char*)&parser->data[parser->offset], at, length);
@@ -71,7 +72,6 @@ class WebSocketServer {
     parser = (websocket_parser*)malloc(sizeof(websocket_parser));
     websocket_parser_init(parser);
     parser->data = (void*)this;
-
   }
   ~WebSocketServer() { free(parser); }
   void start() {
@@ -94,9 +94,9 @@ class WebSocketServer {
     LOG_DEBUG("data: %.*s", (int)len, buf->peek())
     transferred_.fetch_add(len);
     receivedMessages_.fetch_add(1);
-    //websocket is first http to handshake, so first prepare http
-    size_t nread = websocket_parser_execute(parser, &settings, buf->peek(),
-                                            len);
+    // websocket is first http to handshake, so first prepare http
+    size_t nread =
+        websocket_parser_execute(parser, &settings, buf->peek(), len);
     // if (nread != data_len) {
     //   // some callback return a value other than 0
     // }

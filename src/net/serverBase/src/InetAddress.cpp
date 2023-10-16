@@ -1,10 +1,10 @@
-#include "net/include/InetAddress.h"
+#include "net/serverBase/include/InetAddress.h"
 
 #include <strings.h>
 
 #include <cstring>
 
-#include "net/include/SocketUtil.h"
+#include "net/serverBase/include/SocketUtil.h"
 
 namespace CppUtil {
 

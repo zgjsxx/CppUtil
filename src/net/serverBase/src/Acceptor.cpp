@@ -1,10 +1,10 @@
-#include "net/include/Acceptor.h"
+#include "net/serverBase/include/Acceptor.h"
 
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "net/include/InetAddress.h"
-#include "net/include/SocketUtil.h"
+#include "net/serverBase/include/InetAddress.h"
+#include "net/serverBase/include/SocketUtil.h"
 
 namespace CppUtil {
 namespace Net {

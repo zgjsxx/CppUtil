@@ -21,7 +21,6 @@ foreach(name ${UNITTEST_BIN})
         ${name} 
         vcommon
         vnet
-        vprotocol
     )
     target_compile_options(${name} PRIVATE -std=c++17)
     
