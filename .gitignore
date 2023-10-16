@@ -1,2 +1,5 @@
 build
 .vscode
+.VSCodeCounter
+cmake-build-debug
+cmake-build-release
