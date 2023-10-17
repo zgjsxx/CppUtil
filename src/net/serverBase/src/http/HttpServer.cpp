@@ -40,11 +40,7 @@ HttpServer::HttpServer(const InetAddress& listenAddr, const string& name,
   httpParser_.init(HTTP_BOTH);
 }
 
-void HttpServer::start() {
-  // LOG_WARN << "HttpServer[" << server_.name()
-  //   << "] starts listening on " << server_.ipPort();
-  server_.start();
-}
+void HttpServer::start() { server_.start(); }
 
 void HttpServer::onConnection(const TcpConnectionPtr& conn) {
   if (conn->connected()) {
@@ -54,18 +50,11 @@ void HttpServer::onConnection(const TcpConnectionPtr& conn) {
 }
 
 void HttpServer::onMessage(const TcpConnectionPtr& conn, Buffer* buf) {
-  // HttpContext* context = (HttpContext*)(conn->getMutableContext());
-
   size_t len = buf->readableBytes();
   LOG_DEBUG("length: %d, data: %.*s", (int)len, (int)len, buf->peek())
 
   httpParser_.parseMsg(buf->peek(), buf->readableBytes());
   buf->retrieve(len);
-
-  // if (!)) {
-  //   conn->send("HTTP/1.1 400 Bad Request\r\n\r\n");
-  //   conn->shutdown();
-  // }
 
   if (httpParser_.parseFinish()) {
     LOG_DEBUG("http parser finish")
@@ -84,13 +73,20 @@ void HttpServer::onRequest(const TcpConnectionPtr& conn,
       connection == "close" ||
       (req.getVersion() == HttpRequest::kHttp10 && connection != "Keep-Alive");
   HttpResponse response(close);
+  httpCallback_ = httpApiMap_[req.getUrl()];
   httpCallback_(req, &response);
   Buffer buf;
-  response.setBody("{\"code\":111}");
   response.appendToBuffer(&buf);
 
   conn->send(&buf);
   if (response.closeConnection()) {
     conn->shutdown();
+  }
+}
+
+void HttpServer::registerHttpApi(const std::string& api,
+                                 HttpCallback callback) {
+  if (httpApiMap_.find(api) == httpApiMap_.end()) {
+    httpApiMap_[api] = std::move(callback);
   }
 }

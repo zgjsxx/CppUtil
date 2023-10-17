@@ -17,7 +17,7 @@ class HttpResponse;
 /// It is synchronous, just like Java Servlet.
 class HttpServer : Noncopyable {
  public:
-  typedef std::function<void(const HttpRequest&, HttpResponse*)> HttpCallback;
+  using HttpCallback = std::function<void(const HttpRequest&, HttpResponse*)>;
 
   HttpServer(const InetAddress& listenAddr, const string& name,
              TcpServer::Option option = TcpServer::kNoReusePort);
@@ -30,6 +30,7 @@ class HttpServer : Noncopyable {
   void setThreadNum(int numThreads) { server_.setThreadNum(numThreads); }
 
   void start();
+  void registerHttpApi(const std::string& api, HttpCallback callback);
 
  private:
   using TcpConnectionPtr = std::shared_ptr<TcpConnection>;
@@ -39,6 +40,7 @@ class HttpServer : Noncopyable {
   HttpParser httpParser_;
   TcpServer server_;
   HttpCallback httpCallback_;
+  std::map<std::string, HttpCallback> httpApiMap_;
 };
 
 }  // namespace Net
