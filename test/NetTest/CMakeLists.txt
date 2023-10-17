@@ -6,6 +6,7 @@ set(SOURCES
     TcpWebSocketServer_test.cpp
     HttpServer_test.cpp
     Buffer_test.cpp
+    HttpParser_test.cpp
 )
 
 string(REPLACE ".cpp" "" UNITTEST_BIN  "${SOURCES}")

@@ -30,7 +30,7 @@ void HttpHeader::set(std::string key, std::string value) {
   headers[key] = value;
 }
 
-std::string HttpHeader::get(std::string key) {
+std::string HttpHeader::get(std::string key) const {
   std::string v;
 
   auto it = headers.find(key);
@@ -77,6 +77,7 @@ void HttpParser::fillHttpRequest(HttpRequest& req) {
   req.setUrl(url_);
   // add more next
   req.setMethod(method_);
+  req.setHttpHeader(*(headerPtr_.get()));
 }
 
 void HttpParser::reset() {
@@ -124,11 +125,11 @@ int HttpParser::on_url(http_parser* parser, const char* at, size_t length) {
 int HttpParser::on_header_field(http_parser* parser, const char* at,
                                 size_t length) {
   HttpParser* obj = (HttpParser*)parser->data;
-  if (!obj->fieldValue_.empty()) {
-    obj->headerPtr_->set(obj->fieldName_, obj->fieldValue_);
-    obj->fieldName_ = obj->fieldValue_ = "";
-  }
-
+  // if (!obj->fieldValue_.empty()) {
+  //   obj->headerPtr_->set(obj->fieldName_, obj->fieldValue_);
+  //   obj->fieldName_ = obj->fieldValue_ = "";
+  // }
+  LOG_DEBUG("header field: %.*s", (int)length, at)
   if (length > 0) {
     obj->fieldName_.append(at, (int)length);
   }
@@ -140,6 +141,11 @@ int HttpParser::on_header_value(http_parser* parser, const char* at,
   HttpParser* obj = (HttpParser*)parser->data;
   if (length > 0) {
     obj->fieldValue_.append(at, length);
+  }
+
+  if (!obj->fieldValue_.empty()) {
+    obj->headerPtr_->set(obj->fieldName_, obj->fieldValue_);
+    obj->fieldName_ = obj->fieldValue_ = "";
   }
   return 0;
 }

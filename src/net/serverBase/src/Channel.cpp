@@ -39,7 +39,14 @@ namespace Net {
 // #define POLLHUP		0x010		/* Hung up.  */
 // #define POLLNVAL	0x020		/* Invalid polling request.  */
 
-Channel::Channel(EventLoop* loop, int fd) : loop_(loop), fd_(fd), index_(-1) {}
+Channel::Channel(EventLoop* loop, int fd) 
+: loop_(loop), 
+fd_(fd), 
+events_(0),
+revents_(0),
+index_(-1),
+addedToLoop_(false)
+ {}
 void Channel::handleEvent() {
   if ((revents_ & POLLHUP) && !(revents_ & POLLIN)) {
     // close event

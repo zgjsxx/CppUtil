@@ -6,6 +6,7 @@
 #include <string>
 
 #include "common/include/Noncopyable.h"
+#include "net/serverBase/include/http/HttpParser.h"
 using std::string;
 namespace CppUtil {
 namespace Net {
@@ -32,48 +33,26 @@ class HttpRequest : public Noncopyable {
 
   const string& query() const { return query_; }
 
-  // void setReceiveTime(Timestamp t)
-  // { receiveTime_ = t; }
-
-  // Timestamp receiveTime() const
-  // { return receiveTime_; }
-
-  void addHeader(const char* start, const char* colon, const char* end) {
-    string field(start, colon);
-    ++colon;
-    while (colon < end && isspace(*colon)) {
-      ++colon;
-    }
-    string value(colon, end);
-    while (!value.empty() && isspace(value[value.size() - 1])) {
-      value.resize(value.size() - 1);
-    }
-    headers_[field] = value;
-  }
-
-  string getHeader(const string& field) const {
-    string result;
-    std::map<string, string>::const_iterator it = headers_.find(field);
-    if (it != headers_.end()) {
-      result = it->second;
-    }
-    return result;
-  }
-
-  const std::map<string, string>& headers() const { return headers_; }
-
   void swap(HttpRequest& that) {
     std::swap(method_, that.method_);
     std::swap(version_, that.version_);
     path_.swap(that.path_);
     query_.swap(that.query_);
     // receiveTime_.swap(that.receiveTime_);
-    headers_.swap(that.headers_);
+    std::swap(httpHeader_, that.httpHeader_);
   }
   void setUrl(const std::string& url) { url_ = url; }
   void setMethod(Http_Method method) { method_ = method; }
   std::string getUrl() const { return url_; }
   std::string getMethodStr() const;
+
+  void setHttpHeader(HttpHeader httpHeader) {
+    httpHeader_ = std::move(httpHeader);
+  }
+
+  std::string getHeader(const std::string& key) const {
+    return httpHeader_.get(key);
+  }
 
  private:
   Http_Method method_;
@@ -82,7 +61,7 @@ class HttpRequest : public Noncopyable {
   string query_;
   std::string url_;
   // Timestamp receiveTime_;
-  std::map<string, string> headers_;
+  HttpHeader httpHeader_;
 };
 
 }  // namespace Net

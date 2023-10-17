@@ -1,14 +1,11 @@
-#include "net/serverBase/include/Acceptor.h"
-
 #include <fcntl.h>
 #include <unistd.h>
-
+#include "net/serverBase/include/Acceptor.h"
 #include "net/serverBase/include/InetAddress.h"
 #include "net/serverBase/include/SocketUtil.h"
 
 namespace CppUtil {
 namespace Net {
-
 Acceptor::Acceptor(EventLoop* loop, const InetAddress& listenAddr,
                    bool reuseport)
     : loop_(loop),

@@ -56,8 +56,8 @@ class TcpConnection : public Noncopyable,
   const InetAddress& localAddress() const { return localAddr_; }
   const InetAddress& peerAddress() const { return peerAddr_; }
   void handleError();
-  void* getMutableContext() { return context_; }
-  void setContext(void* context) { context_ = context; }
+  std::shared_ptr<void> getParser() { return parser_; }
+  void setParser(std::shared_ptr<void>& parser) { parser_ = parser; }
   void shutdown();
 
  private:
@@ -80,7 +80,8 @@ class TcpConnection : public Noncopyable,
   size_t highWaterMark_;
   std::unique_ptr<Socket> socket_;
   std::unique_ptr<Channel> channel_;
-  void* context_;
+  std::shared_ptr<void> parser_{
+      nullptr};  // used for parse a certain protocol, such as http
   Buffer inputBuffer_;
   Buffer outputBuffer_;
 };

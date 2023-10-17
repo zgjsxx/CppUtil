@@ -37,7 +37,6 @@ class HttpServer : Noncopyable {
   void onConnection(const TcpConnectionPtr& conn);
   void onMessage(const TcpConnectionPtr& conn, Buffer* buf);
   void onRequest(const TcpConnectionPtr&, const HttpRequest&);
-  HttpParser httpParser_;
   TcpServer server_;
   HttpCallback httpCallback_;
   std::map<std::string, HttpCallback> httpApiMap_;
