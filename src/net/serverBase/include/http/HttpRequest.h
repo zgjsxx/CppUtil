@@ -14,57 +14,13 @@ class HttpRequest : public Noncopyable {
  public:
   enum Method { kInvalid, kGet, kPost, kHead, kPut, kDelete };
   enum Version { kUnknown, kHttp10, kHttp11 };
+  using Http_Method = unsigned int;
 
-  HttpRequest() : method_(kInvalid), version_(kUnknown) {}
+  HttpRequest() : version_(kUnknown) {}
 
   void setVersion(Version v) { version_ = v; }
 
   Version getVersion() const { return version_; }
-
-  bool setMethod(const char* start, const char* end) {
-    assert(method_ == kInvalid);
-    string m(start, end);
-    if (m == "GET") {
-      method_ = kGet;
-    } else if (m == "POST") {
-      method_ = kPost;
-    } else if (m == "HEAD") {
-      method_ = kHead;
-    } else if (m == "PUT") {
-      method_ = kPut;
-    } else if (m == "DELETE") {
-      method_ = kDelete;
-    } else {
-      method_ = kInvalid;
-    }
-    return method_ != kInvalid;
-  }
-
-  Method method() const { return method_; }
-
-  const char* methodString() const {
-    const char* result = "UNKNOWN";
-    switch (method_) {
-      case kGet:
-        result = "GET";
-        break;
-      case kPost:
-        result = "POST";
-        break;
-      case kHead:
-        result = "HEAD";
-        break;
-      case kPut:
-        result = "PUT";
-        break;
-      case kDelete:
-        result = "DELETE";
-        break;
-      default:
-        break;
-    }
-    return result;
-  }
 
   void setPath(const char* start, const char* end) { path_.assign(start, end); }
 
@@ -115,10 +71,12 @@ class HttpRequest : public Noncopyable {
     headers_.swap(that.headers_);
   }
   void setUrl(const std::string& url) { url_ = url; }
+  void setMethod(Http_Method method) { method_ = method; }
   std::string getUrl() const { return url_; }
+  std::string getMethodStr() const;
 
  private:
-  Method method_;
+  Http_Method method_;
   Version version_;
   string path_;
   string query_;

@@ -23,14 +23,21 @@ using namespace CppUtil;
 using namespace CppUtil::Net;
 
 void hello(const HttpRequest& req, HttpResponse* resp) {
-  resp->setBody("{\"name\":\"tom\"}");
+  resp->setBody("{\"name\":\"hello\"}");
   return;
 }
+
+void demo(const HttpRequest& req, HttpResponse* resp) {
+  resp->setBody("{\"name\":\"demo\"}");
+  return;
+}
+
 int main() {
   CppUtil::Common::initLog("HttpServer_test.log");
   LOG_DEBUG("%s", "init log")
   InetAddress listenAddr(8080);
   HttpServer server(listenAddr, "http");
   server.registerHttpApi("/hello/", hello);
+  server.registerHttpApi("/demo/", demo);
   server.start();
 }

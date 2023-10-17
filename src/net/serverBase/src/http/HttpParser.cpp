@@ -76,6 +76,7 @@ Common::Status HttpParser::parseMsg(const char* buf, int len) {
 void HttpParser::fillHttpRequest(HttpRequest& req) {
   req.setUrl(url_);
   // add more next
+  req.setMethod(method_);
 }
 
 void HttpParser::reset() { url_.clear(); }
@@ -112,6 +113,8 @@ int HttpParser::on_url(http_parser* parser, const char* at, size_t length) {
   if (length > 0) {
     obj->url_.append(at, length);
   }
+
+  obj->method_ = parser->method;
   return 0;
 }
 

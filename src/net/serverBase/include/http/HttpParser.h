@@ -39,6 +39,7 @@ class HttpParser {
  public:
   HttpParser();
   ~HttpParser();
+  using Http_Method = unsigned int;
 
  public:
   void init(http_parser_type type);
@@ -69,6 +70,7 @@ class HttpParser {
   std::string url_;
   std::unique_ptr<HttpHeader> headerPtr_;
   std::string body_;
+  Http_Method method_;
 };
 
 }  // namespace Net

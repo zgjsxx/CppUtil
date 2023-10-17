@@ -20,6 +20,7 @@ set(NET_SOURCES
     serverBase/src/Buffer.cpp
     serverBase/src/TcpConnection.cpp
     serverBase/src/http/HttpServer.cpp
+    serverBase/src/http/HttpRequest.cpp
     serverBase/src/http/HttpResponse.cpp
     serverBase/src/http/HttpParser.cpp
     protocol/http/http_parser.c

@@ -60,7 +60,8 @@ void HttpServer::onMessage(const TcpConnectionPtr& conn, Buffer* buf) {
     LOG_DEBUG("http parser finish")
     HttpRequest req;
     httpParser_.fillHttpRequest(req);
-    LOG_DEBUG("url = %s", req.getUrl().c_str())
+    LOG_DEBUG("method: %s, url = %s", req.getMethodStr().c_str(),
+              req.getUrl().c_str())
     onRequest(conn, req);
     httpParser_.reset();
   }
