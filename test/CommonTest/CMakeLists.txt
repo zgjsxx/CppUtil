@@ -1,17 +1,31 @@
 cmake_minimum_required(VERSION 3.17)
 project(CommonTest)
 
-set(SOURCES 
+set(UT_SOURCES 
     Status_test.cpp  
     ThreadPool_test.cpp  
     Logger_test.cpp
     SystemInfo_test.cpp
 )
 
-string(REPLACE ".cpp" "" UNITTEST_BIN  "${SOURCES}")
+message(STATUS "CMAKE_SOURCE_DIR = ${CMAKE_SOURCE_DIR}")
+
+set(DEPEND_SOURCES
+    ${CMAKE_SOURCE_DIR}/src/common/src/Logger.cpp
+    ${CMAKE_SOURCE_DIR}/src/common/src/ProcessInfo.cpp
+    ${CMAKE_SOURCE_DIR}/src/common/src/Status.cpp
+    ${CMAKE_SOURCE_DIR}/src/common/src/SystemInfo.cpp
+    ${CMAKE_SOURCE_DIR}/src/common/src/Thread.cpp
+    ${CMAKE_SOURCE_DIR}/src/common/src/ThreadPool.cpp
+    ${CMAKE_SOURCE_DIR}/src/common/src/CountDownLatch.cpp
+)
+
+set(CMAKE_CXX_STANDARD 17)
+
+string(REPLACE ".cpp" "" UNITTEST_BIN  "${UT_SOURCES}")
 
 foreach(name ${UNITTEST_BIN})
-    add_executable(${name} ${name}.cpp)
+    add_executable(${name} ${DEPEND_SOURCES} ${name}.cpp )
     target_include_directories(
         ${name} 
         PUBLIC ${CMAKE_SOURCE_DIR}/src
@@ -20,10 +34,8 @@ foreach(name ${UNITTEST_BIN})
 
     target_link_libraries(
         ${name} 
-        vcommon
-        vnet
     )
-    target_compile_options(${name} PRIVATE -std=c++17)
+
     
     add_test(NAME, ${name} COMMAND ${name})
 endforeach()
