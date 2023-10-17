@@ -1,5 +1,4 @@
-#ifndef CPPUTIL_NET_SOCKETUTIL_H
-#define CPPUTIL_NET_SOCKETUTIL_H
+#pragma once
 
 #include <arpa/inet.h>
 #include <sys/uio.h>
@@ -54,4 +53,3 @@ inline uint16_t networkToHost16(uint16_t net16) { return be16toh(net16); }
 }  // namespace SockUtil
 }  // namespace Net
 }  // namespace CppUtil
-#endif

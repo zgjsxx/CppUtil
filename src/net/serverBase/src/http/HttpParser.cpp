@@ -79,7 +79,10 @@ void HttpParser::fillHttpRequest(HttpRequest& req) {
   req.setMethod(method_);
 }
 
-void HttpParser::reset() { url_.clear(); }
+void HttpParser::reset() {
+  url_.clear();
+  method_ = HTTP_GET;
+}
 bool HttpParser::parseFinish() const {
   if (state_ >= kHttpParserMessageComple) {
     return true;

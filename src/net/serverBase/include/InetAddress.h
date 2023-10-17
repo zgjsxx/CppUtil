@@ -1,5 +1,4 @@
-#ifndef CPPUTIL_NET_INETADDRESS_H
-#define CPPUTIL_NET_INETADDRESS_H
+#pragma once
 #include <netinet/in.h>
 
 #include <string>
@@ -35,5 +34,3 @@ class InetAddress {
 
 }  // namespace Net
 }  // namespace CppUtil
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef CPP_UTIL_COMMON_THREADPOOL_H
-#define CPP_UTIL_COMMON_THREADPOOL_H
+#pragma once
 
 #include <functional>
 #include <memory>
@@ -28,5 +27,3 @@ class ThreadPool : public Noncopyable {
 };
 
 }  // namespace CppUtil
-
-#endif

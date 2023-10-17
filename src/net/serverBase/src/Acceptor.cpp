@@ -22,7 +22,11 @@ Acceptor::Acceptor(EventLoop* loop, const InetAddress& listenAddr,
   acceptChannel_.setReadCallback(std::bind(&Acceptor::handleRead, this));
 }
 
-Acceptor::~Acceptor() { ::close(idleFd_); }
+Acceptor::~Acceptor() {
+  acceptChannel_.disableAll();
+  acceptChannel_.remove();
+  ::close(idleFd_);
+}
 
 void Acceptor::listen() {
   listening_ = true;

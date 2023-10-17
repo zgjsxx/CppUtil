@@ -1,5 +1,5 @@
-#ifndef CPPUTIL_NET_EVENTLOOP_H
-#define CPPUTIL_NET_EVENTLOOP_H
+#pragma once
+
 #include <atomic>
 #include <functional>
 #include <memory>
@@ -52,7 +52,4 @@ class EventLoop : public Noncopyable {
 };
 
 }  // namespace Net
-
 }  // namespace CppUtil
-
-#endif

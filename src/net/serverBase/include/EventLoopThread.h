@@ -1,5 +1,4 @@
-#ifndef CPPUTIL_NET_EVENTLOOPTHREAD_H
-#define CPPUTIL_NET_EVENTLOOPTHREAD_H
+#pragma once
 
 #include <condition_variable>
 #include <functional>
@@ -33,7 +32,4 @@ class EventLoopThread : public Noncopyable {
 };
 
 }  // namespace Net
-
 }  // namespace CppUtil
-
-#endif

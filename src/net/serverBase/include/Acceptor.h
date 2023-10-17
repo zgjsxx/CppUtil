@@ -29,10 +29,6 @@ class Acceptor : public Noncopyable {
 
   bool listening() const { return listening_; }
 
-  // Deprecated, use the correct spelling one above.
-  // Leave the wrong spelling here in case one needs to grep it for error
-  // messages. bool listenning() const { return listening(); }
-
  private:
   void handleRead();
 
@@ -41,8 +37,8 @@ class Acceptor : public Noncopyable {
   Socket acceptSocket_;
   Channel acceptChannel_;
   NewConnCallback newConnCallback_;
-  bool listening_;
-  int idleFd_;
+  bool listening_{false};
+  int idleFd_{-1};
 };
 
 }  // namespace Net

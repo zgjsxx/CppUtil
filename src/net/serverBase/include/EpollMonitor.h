@@ -1,5 +1,4 @@
-#ifndef CPPUTIL_NET_MONITOR_H
-#define CPPUTIL_NET_MONITOR_H
+#pragma once
 
 #include <sys/epoll.h>
 
@@ -40,4 +39,3 @@ class EpollMonitor {
 
 }  // namespace Net
 }  // namespace CppUtil
-#endif

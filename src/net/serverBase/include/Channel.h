@@ -1,6 +1,4 @@
-#ifndef CPPUTIL_NET_CHANNEL_H
-#define CPPUTIL_NET_CHANNEL_H
-
+#pragma once
 #include <poll.h>
 
 #include <functional>
@@ -34,6 +32,8 @@ class Channel : public Noncopyable {
   int getFd() const { return fd_; }
 
   int getEvents() const { return events_; }
+
+  void setRevents(int revent) { revents_ = revent; }  // used by pollers
 
   bool isNoneEvent() const { return events_ == kNoneEvent; }
 
@@ -69,8 +69,6 @@ class Channel : public Noncopyable {
   int index() { return index_; }
   void setIndex(int idx) { index_ = idx; }
 
-  void setRevents(int revent) { revents_ = revent; }  // used by pollers
-
   EventLoop* ownerLoop() { return loop_; }
   void remove();
 
@@ -94,4 +92,3 @@ class Channel : public Noncopyable {
 
 }  // namespace Net
 }  // namespace CppUtil
-#endif

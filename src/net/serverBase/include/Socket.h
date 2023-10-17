@@ -1,3 +1,4 @@
+#pragma once
 #include "common/include/Noncopyable.h"
 
 namespace CppUtil {
