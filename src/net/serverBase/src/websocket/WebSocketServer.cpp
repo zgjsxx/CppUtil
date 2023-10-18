@@ -1,6 +1,6 @@
 #include "common/include/Logger.h"
 #include "common/include/StringUtil.h"
-#include "net/serverBase/include/http/HttpServer.h"
+#include "net/serverBase/include/websocket/WebSocketServer.h"
 #include "net/serverBase/include/TcpConnection.h"
 #include "net/serverBase/include/http/HttpRequest.h"
 #include "net/serverBase/include/http/HttpResponse.h"
@@ -11,7 +11,7 @@ namespace CppUtil {
 namespace Net {
 namespace Detail {
 
-void defaultWebSocketCallback(const HttpRequest&, HttpResponse* resp) {
+void defaultHttpCallback(const HttpRequest&, HttpResponse* resp) {
   resp->setStatusCode(HTTP_STATUS_NOT_FOUND);
   resp->setCloseConnection(true);
 }
@@ -21,17 +21,19 @@ void defaultWebSocketCallback(const HttpRequest&, HttpResponse* resp) {
 }  // namespace CppUtil
 
 using namespace std::placeholders;
-HttpServer::HttpServer(const InetAddress& listenAddr, const string& name,
-                       TcpServer::Option option)
+WebSocketServer::WebSocketServer(const InetAddress& listenAddr,
+                                 const string& name, TcpServer::Option option)
     : server_(listenAddr, name, option),
-      httpCallback_(Detail::defaultWebSocketCallback) {
-  server_.setConnectionCallback(std::bind(&HttpServer::onConnection, this, _1));
-  server_.setMessageCallback(std::bind(&HttpServer::onMessage, this, _1, _2));
+      httpCallback_(Detail::defaultHttpCallback) {
+  server_.setConnectionCallback(
+      std::bind(&WebSocketServer::onConnection, this, _1));
+  server_.setMessageCallback(
+      std::bind(&WebSocketServer::onMessage, this, _1, _2));
 }
 
-void HttpServer::start() { server_.start(); }
+void WebSocketServer::start() { server_.start(); }
 
-void HttpServer::onConnection(const TcpConnectionPtr& conn) {
+void WebSocketServer::onConnection(const TcpConnectionPtr& conn) {
   if (conn->connected()) {
     LOG_DEBUG("set Parser")
     std::shared_ptr<void> parser = std::make_shared<HttpParser>();
@@ -41,7 +43,7 @@ void HttpServer::onConnection(const TcpConnectionPtr& conn) {
   }
 }
 
-void HttpServer::onMessage(const TcpConnectionPtr& conn, Buffer* buf) {
+void WebSocketServer::onMessage(const TcpConnectionPtr& conn, Buffer* buf) {
   size_t len = buf->readableBytes();
   LOG_DEBUG("length: %d, data: %.*s", (int)len, (int)len, buf->peek())
   std::shared_ptr<void> parser = conn->getParser();
@@ -61,8 +63,8 @@ void HttpServer::onMessage(const TcpConnectionPtr& conn, Buffer* buf) {
   }
 }
 
-void HttpServer::onRequest(const TcpConnectionPtr& conn,
-                           const HttpRequest& req) {
+void WebSocketServer::onRequest(const TcpConnectionPtr& conn,
+                                const HttpRequest& req) {
   std::string connection = req.getHeader("Connection");
   Common::strToLower(connection);
   bool close =
@@ -84,8 +86,8 @@ void HttpServer::onRequest(const TcpConnectionPtr& conn,
   }
 }
 
-void HttpServer::registerHttpApi(const std::string& api,
-                                 HttpCallback callback) {
+void WebSocketServer::registerHttpApi(const std::string& api,
+                                      HttpCallback callback) {
   if (httpApiMap_.find(api) == httpApiMap_.end()) {
     httpApiMap_[api] = std::move(callback);
   }

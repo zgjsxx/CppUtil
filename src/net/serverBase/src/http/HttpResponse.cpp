@@ -8,10 +8,10 @@ using namespace CppUtil;
 using namespace CppUtil::Net;
 
 void HttpResponse::appendToBuffer(Buffer* output) const {
-  char buf[32];
-  snprintf(buf, sizeof buf, "HTTP/1.1 %d ", statusCode_);
+  char buf[32] = {0};
+  snprintf(buf, sizeof buf, "HTTP/1.1 %d %s", statusCode_,
+           http_status_str((http_status)statusCode_));
   output->append(buf);
-  output->append(statusMessage_);
   output->append("\r\n");
 
   if (closeConnection_) {

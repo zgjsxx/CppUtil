@@ -42,13 +42,13 @@ class EventLoop : public Noncopyable {
   std::atomic<bool> quit_{false};
   bool eventHandling_{false};
   ChannelList activeChannels_;
-  std::unique_ptr<Channel> wakeupChannel_;
   std::unique_ptr<EpollMonitor> sockMonitorPtr_;
   Channel* currentActiveChannel_{nullptr};
   int wakeupFd_{-1};
   int threadId_{-1};
   std::atomic_bool callingPendingFunctors_; /* atomic */
   std::vector<Functor> pendingFunctors_;
+  std::unique_ptr<Channel> wakeupChannel_;
 };
 
 }  // namespace Net

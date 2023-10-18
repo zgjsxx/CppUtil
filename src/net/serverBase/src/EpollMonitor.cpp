@@ -1,12 +1,10 @@
-#include "net/serverBase/include/EpollMonitor.h"
-
 #include <errno.h>
 #include <unistd.h>
-
+#include <assert.h>
 #include <cstring>
 #include <iostream>
-
 #include "common/include/Logger.h"
+#include "net/serverBase/include/EpollMonitor.h"
 
 namespace CppUtil {
 
@@ -26,15 +24,12 @@ void EpollMonitor::poll(int timeoutMs, ChannelList* activeChannels) {
                                static_cast<int>(events_.size()), timeoutMs);
   int savedErrno = errno;
   if (numEvents > 0) {
-    LOG_DEBUG("%s", "new events comming")
     fillActiveChannels(numEvents, activeChannels);
     if ((size_t)numEvents == events_.size()) {
       events_.resize(events_.size() * 2);
     }
-  } else if (numEvents == 0) {
-    // no event happens
-  } else {
-    std::cout << "error" << std::endl;
+  }
+  if (numEvents < 0) {
     if (savedErrno != EINTR) {
       errno = savedErrno;
     }
@@ -57,7 +52,8 @@ void EpollMonitor::updateInterestEvent(int operation, Channel* channel) {
   event.data.ptr = channel;
   int fd = channel->getFd();
   if (::epoll_ctl(epollfd_, operation, fd, &event) < 0) {
-    // add log
+    LOG_ERROR("fd %d %s failed, errno reason: %s", fd,
+              epollOperatorToString(operation), strerror(errno))
   }
 }
 
@@ -98,6 +94,20 @@ void EpollMonitor::removeChannel(Channel* channel) {
 bool EpollMonitor::hasChannel(Channel* channel) const {
   ChannelMap::const_iterator it = channels_.find(channel->getFd());
   return it != channels_.end() && it->second == channel;
+}
+
+const char* EpollMonitor::epollOperatorToString(int op) {
+  switch (op) {
+    case EPOLL_CTL_ADD:
+      return "ADD";
+    case EPOLL_CTL_DEL:
+      return "DEL";
+    case EPOLL_CTL_MOD:
+      return "MOD";
+    default:
+      assert(false && "ERROR op");
+      return "Unknown Operator";
+  }
 }
 
 }  // namespace Net

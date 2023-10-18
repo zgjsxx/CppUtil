@@ -28,6 +28,8 @@ class EpollMonitor {
   void removeChannel(Channel* channel);
   bool hasChannel(Channel* channel) const;
 
+  static const char* epollOperatorToString(int op);
+
  private:
   using EventList = std::vector<struct epoll_event>;
   static const int kInitEventListSize = 16;

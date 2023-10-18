@@ -35,7 +35,7 @@ int main() {
   LOG_DEBUG("%s", "init log")
   InetAddress listenAddr(8080);
   HttpServer server(listenAddr, "http");
-  server.registerHttpApi("/hello/", hello);
-  server.registerHttpApi("/demo/", demo);
+  server.registerHttpApi("/hello", hello);
+  server.registerHttpApi("/demo", demo);
   server.start();
 }

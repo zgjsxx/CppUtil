@@ -23,6 +23,7 @@ set(NET_SOURCES
     serverBase/src/http/HttpRequest.cpp
     serverBase/src/http/HttpResponse.cpp
     serverBase/src/http/HttpParser.cpp
+    serverBase/src/websocket/WebSocketServer.cpp
     protocol/http/http_parser.c
     protocol/websocket/websocket_parser.c
     )

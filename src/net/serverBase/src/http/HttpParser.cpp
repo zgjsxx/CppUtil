@@ -86,6 +86,11 @@ void HttpParser::fillHttpRequest(HttpRequest& req) {
   req.setBody(body_);
   req.setMajorVer(httpMajor_);
   req.setMinorVer(httpMinor_);
+  if (httpMajor_ == 1 && httpMinor_ == 0) {
+    req.setVersion(HttpRequest::kHttp10);
+  } else if (httpMajor_ == 1 && httpMinor_ == 1) {
+    req.setVersion(HttpRequest::kHttp11);
+  }
   std::string host = req.getHeader("Host");
   if (!host.empty()) {
     req.setHost(host);

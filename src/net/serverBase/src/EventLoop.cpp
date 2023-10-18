@@ -31,7 +31,11 @@ EventLoop::EventLoop()
   wakeupChannel_->enableReading();
 }
 
-EventLoop::~EventLoop() { ::close(wakeupFd_); }
+EventLoop::~EventLoop() {
+  ::close(wakeupFd_);
+  wakeupChannel_->disableAll();
+  wakeupChannel_->remove();
+}
 
 void EventLoop::loop() {
   looping_ = true;
