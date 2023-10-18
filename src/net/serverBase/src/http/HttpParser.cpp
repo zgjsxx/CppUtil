@@ -56,6 +56,7 @@ void HttpParser::init(http_parser_type type) {
   settings_.on_headers_complete = on_headers_complete;
   settings_.on_body = on_body;
   settings_.on_message_complete = on_message_complete;
+  settings_.on_chunk_header = on_chunk_header;
 }
 
 Common::Status HttpParser::parseMsg(const char* buf, int len) {
@@ -78,6 +79,7 @@ void HttpParser::fillHttpRequest(HttpRequest& req) {
   // add more next
   req.setMethod(method_);
   req.setHttpHeader(*(headerPtr_.get()));
+  req.setBody(body_);
 }
 
 void HttpParser::reset() {
@@ -103,12 +105,14 @@ int HttpParser::on_message_begin(http_parser* parser) {
 int HttpParser::on_headers_complete(http_parser* parser) {
   HttpParser* obj = (HttpParser*)parser->data;
   obj->state_ = kHttpParserHeaderComplete;
+  LOG_DEBUG("header parse complete")
   return 0;
 }
 
 int HttpParser::on_message_complete(http_parser* parser) {
   HttpParser* obj = (HttpParser*)parser->data;
   obj->state_ = kHttpParserMessageComple;
+  LOG_DEBUG("message parse complete")
   return 0;
 }
 
@@ -125,10 +129,6 @@ int HttpParser::on_url(http_parser* parser, const char* at, size_t length) {
 int HttpParser::on_header_field(http_parser* parser, const char* at,
                                 size_t length) {
   HttpParser* obj = (HttpParser*)parser->data;
-  // if (!obj->fieldValue_.empty()) {
-  //   obj->headerPtr_->set(obj->fieldName_, obj->fieldValue_);
-  //   obj->fieldName_ = obj->fieldValue_ = "";
-  // }
   LOG_DEBUG("header field: %.*s", (int)length, at)
   if (length > 0) {
     obj->fieldName_.append(at, (int)length);
@@ -154,6 +154,12 @@ int HttpParser::on_body(http_parser* parser, const char* at, size_t length) {
   HttpParser* obj = (HttpParser*)parser->data;
   obj->state_ = kHttpParserBody;
   obj->body_.append(at, length);
+  LOG_DEBUG("on_body parse complete")
+  return 0;
+}
+
+int HttpParser::on_chunk_header(http_parser* parser) {
+  LOG_DEBUG("on_chunk_header, length = %lu", parser->content_length)
   return 0;
 }
 

@@ -53,6 +53,8 @@ class HttpRequest : public Noncopyable {
   std::string getHeader(const std::string& key) const {
     return httpHeader_.get(key);
   }
+  void setBody(std::string& body) { body_ = std::move(body); }
+  std::string getBody() const { return body_; }
 
  private:
   Http_Method method_;
@@ -62,6 +64,7 @@ class HttpRequest : public Noncopyable {
   std::string url_;
   // Timestamp receiveTime_;
   HttpHeader httpHeader_;
+  std::string body_;
 };
 
 }  // namespace Net

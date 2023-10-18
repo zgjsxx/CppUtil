@@ -13,4 +13,5 @@ common module includes:
 net module include
 - TcpServer
 - EchoServer 
-- Http Helloworld server
+- Http api server
+- http support content-length and transfer-encoding: chunked

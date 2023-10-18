@@ -58,6 +58,7 @@ class HttpParser {
   static int on_header_value(http_parser* parser, const char* at,
                              size_t legnth);
   static int on_body(http_parser* parser, const char* at, size_t length);
+  static int on_chunk_header(http_parser* parser);
 
  private:
   http_parser_settings settings_;
