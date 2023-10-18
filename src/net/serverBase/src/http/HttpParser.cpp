@@ -85,6 +85,21 @@ void HttpParser::fillHttpRequest(HttpRequest& req) {
 void HttpParser::reset() {
   url_.clear();
   method_ = HTTP_GET;
+  state_ = kHttpParserInit;
+  body_.clear();
+
+  memset(&parser_, 0, sizeof(parser_));
+  http_parser_init(&parser_, HTTP_BOTH);
+  parser_.data = (void*)this;
+  memset(&settings_, 0, sizeof(settings_));
+  settings_.on_message_begin = on_message_begin;
+  settings_.on_url = on_url;
+  settings_.on_header_field = on_header_field;
+  settings_.on_header_value = on_header_value;
+  settings_.on_headers_complete = on_headers_complete;
+  settings_.on_body = on_body;
+  settings_.on_message_complete = on_message_complete;
+  settings_.on_chunk_header = on_chunk_header;
 }
 bool HttpParser::parseFinish() const {
   if (state_ >= kHttpParserMessageComple) {

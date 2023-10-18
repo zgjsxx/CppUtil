@@ -33,7 +33,10 @@ void HttpServer::start() { server_.start(); }
 
 void HttpServer::onConnection(const TcpConnectionPtr& conn) {
   if (conn->connected()) {
+    LOG_DEBUG("set Parser")
     std::shared_ptr<void> parser = std::make_shared<HttpParser>();
+    HttpParser* httpParser = (HttpParser*)parser.get();
+    httpParser->init(HTTP_BOTH);
     conn->setParser(parser);
   }
 }
@@ -43,6 +46,7 @@ void HttpServer::onMessage(const TcpConnectionPtr& conn, Buffer* buf) {
   LOG_DEBUG("length: %d, data: %.*s", (int)len, (int)len, buf->peek())
   std::shared_ptr<void> parser = conn->getParser();
   HttpParser* httpParser = (HttpParser*)parser.get();
+  LOG_DEBUG("parser address is %x", httpParser);
   httpParser->parseMsg(buf->peek(), buf->readableBytes());
   buf->retrieve(len);
 
@@ -68,6 +72,7 @@ void HttpServer::onRequest(const TcpConnectionPtr& conn,
   HttpResponse response(close);
   httpCallback_ = httpApiMap_[req.getUrl()];
   httpCallback_(req, &response);
+  response.setStatusCode(HttpResponse::k200Ok);
   Buffer buf;
   response.appendToBuffer(&buf);
 

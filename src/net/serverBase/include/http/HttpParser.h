@@ -28,6 +28,10 @@ class HttpHeader {
   void set(std::string key, std::string value);
 
   std::string get(std::string key) const;
+  void clear() {
+    headers.clear();
+    keys_.clear();
+  }
 
  private:
   // FIXME:Set-Cookie can be duplicated in http header
