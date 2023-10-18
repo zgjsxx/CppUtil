@@ -1,9 +1,9 @@
-#include "net/serverBase/include/http/HttpParser.h"
-
 #include <cstring>
-
+#include "net/serverBase/include/http/HttpParser.h"
 #include "common/include/Logger.h"
+#include "common/include/StringUtil.h"
 #include "net/serverBase/include/http/HttpRequest.h"
+
 namespace CppUtil {
 namespace Net {
 
@@ -12,17 +12,20 @@ void HttpHeader::set(std::string key, std::string value) {
   //      transfer-encoding
   // transform to:
   //      Transfer-Encoding
-  char pchar = 0;
-  for (int i = 0; i < (int)key.length(); i++) {
-    char ch = key.at(i);
+  // char pchar = 0;
+  // for (int i = 0; i < (int)key.length(); i++) {
+  //   char ch = key.at(i);
 
-    if (i == 0 || pchar == '-') {
-      if (ch >= 'a' && ch <= 'z') {
-        ((char*)key.data())[i] = ch - 32;
-      }
-    }
-    pchar = ch;
-  }
+  //   if (i == 0 || pchar == '-') {
+  //     if (ch >= 'a' && ch <= 'z') {
+  //       ((char*)key.data())[i] = ch - 32;
+  //     }
+  //   }
+  //   pchar = ch;
+  // }
+
+  Common::strToLower(key);
+
   if (headers.find(key) == headers.end()) {
     keys_.emplace_back(key);
   }
@@ -31,8 +34,9 @@ void HttpHeader::set(std::string key, std::string value) {
 }
 
 std::string HttpHeader::get(std::string key) const {
-  std::string v;
+  Common::strToLower(key);
 
+  std::string v;
   auto it = headers.find(key);
   if (it != headers.end()) {
     v = it->second;
@@ -80,6 +84,12 @@ void HttpParser::fillHttpRequest(HttpRequest& req) {
   req.setMethod(method_);
   req.setHttpHeader(*(headerPtr_.get()));
   req.setBody(body_);
+  req.setMajorVer(httpMajor_);
+  req.setMinorVer(httpMinor_);
+  std::string host = req.getHeader("Host");
+  if (!host.empty()) {
+    req.setHost(host);
+  }
 }
 
 void HttpParser::reset() {
@@ -120,6 +130,9 @@ int HttpParser::on_message_begin(http_parser* parser) {
 int HttpParser::on_headers_complete(http_parser* parser) {
   HttpParser* obj = (HttpParser*)parser->data;
   obj->state_ = kHttpParserHeaderComplete;
+  obj->httpMajor_ = parser->http_major;
+  obj->httpMinor_ = parser->http_minor;
+  LOG_DEBUG("http major = %u, minor %u", parser->http_major, parser->http_minor)
   LOG_DEBUG("header parse complete")
   return 0;
 }

@@ -31,6 +31,8 @@ TEST_CASE("1", "HttpParser") {
   REQUIRE(strcmp(req.getMethodStr().c_str(), "GET") == 0);
   REQUIRE(strcmp(req.getHeader("Host").c_str(), "127.0.0.1") == 0);
   REQUIRE(strcmp(req.getHeader("Connection").c_str(), "Keep-Alive") == 0);
+  REQUIRE(strcmp(req.getHeader("connection").c_str(), "Keep-Alive") ==
+          0);  // case-insencitive
   REQUIRE(strcmp(req.getHeader("Accept").c_str(), "*/*") == 0);
   REQUIRE(strcmp(req.getHeader("Accept-Language").c_str(), "zh-cn") == 0);
   REQUIRE(

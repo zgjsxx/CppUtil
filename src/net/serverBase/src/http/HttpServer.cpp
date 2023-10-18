@@ -46,7 +46,6 @@ void HttpServer::onMessage(const TcpConnectionPtr& conn, Buffer* buf) {
   LOG_DEBUG("length: %d, data: %.*s", (int)len, (int)len, buf->peek())
   std::shared_ptr<void> parser = conn->getParser();
   HttpParser* httpParser = (HttpParser*)parser.get();
-  LOG_DEBUG("parser address is %x", httpParser);
   httpParser->parseMsg(buf->peek(), buf->readableBytes());
   buf->retrieve(len);
 
@@ -54,8 +53,9 @@ void HttpServer::onMessage(const TcpConnectionPtr& conn, Buffer* buf) {
     LOG_DEBUG("http parser finish")
     HttpRequest req;
     httpParser->fillHttpRequest(req);
-    LOG_DEBUG("method: %s, url = %s", req.getMethodStr().c_str(),
-              req.getUrl().c_str())
+    LOG_DEBUG("host: %s method: %s, url = %s, http version: %u.%u",
+              req.getHost().c_str(), req.getMethodStr().c_str(),
+              req.getUrl().c_str(), req.getMajorVer(), req.getMinorVer())
     onRequest(conn, req);
     httpParser->reset();
   }

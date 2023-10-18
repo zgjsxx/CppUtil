@@ -14,6 +14,7 @@ set(COMMON_SOURCES
     src/CountDownLatch.cpp
     src/Logger.cpp
     src/SystemInfo.cpp
+    src/StringUtil.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED)

@@ -55,6 +55,12 @@ class HttpRequest : public Noncopyable {
   }
   void setBody(std::string& body) { body_ = std::move(body); }
   std::string getBody() const { return body_; }
+  void setMajorVer(unsigned int majorVersion) { httpMajor_ = majorVersion; }
+  unsigned int getMajorVer() const { return httpMajor_; }
+  unsigned int getMinorVer() const { return httpMinor_; }
+  void setMinorVer(unsigned int minorVersion) { httpMinor_ = minorVersion; }
+  void setHost(std::string host) { host_ = host; }
+  std::string getHost() const { return host_; }
 
  private:
   Http_Method method_;
@@ -65,6 +71,9 @@ class HttpRequest : public Noncopyable {
   // Timestamp receiveTime_;
   HttpHeader httpHeader_;
   std::string body_;
+  unsigned short httpMajor_;
+  unsigned short httpMinor_;
+  std::string host_;
 };
 
 }  // namespace Net

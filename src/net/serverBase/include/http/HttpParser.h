@@ -76,6 +76,9 @@ class HttpParser {
   std::unique_ptr<HttpHeader> headerPtr_;
   std::string body_;
   Http_Method method_;
+  unsigned short httpMajor_;
+  unsigned short httpMinor_;
+  std::string host_;
 };
 
 }  // namespace Net
