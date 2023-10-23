@@ -155,15 +155,16 @@ void TcpConnection::sendInLoop(const void* data, size_t len) {
 void TcpConnection::send(Buffer* buf) {
   if (state_ == kConnected) {
     if (loop_->isInLoopThread()) {
+      // if send function called thread is same with event loop thread,
+      // run it directly
       sendInLoop(buf->peek(), buf->readableBytes());
       buf->retrieveAll();
     } else {
-      void (TcpConnection::*fp)(const StringPiece& message) =
-          &TcpConnection::sendInLoop;
-      loop_->runInLoop(std::bind(fp,
-                                 this,  // FIXME
-                                 buf->retrieveAllAsString()));
-      // std::forward<string>(message)));
+      // or push it into queue
+      loop_->runInLoop([this, buf]() {
+        sendInLoop(buf->peek(), buf->readableBytes());
+        buf->retrieveAll();
+      });
     }
   }
 }
@@ -173,12 +174,8 @@ void TcpConnection::send(const StringPiece& message) {
     if (loop_->isInLoopThread()) {
       sendInLoop(message);
     } else {
-      void (TcpConnection::*fp)(const StringPiece& message) =
-          &TcpConnection::sendInLoop;
-      loop_->runInLoop(std::bind(fp,
-                                 this,  // FIXME
-                                 message.as_string()));
-      // std::forward<string>(message)));
+      loop_->runInLoop(
+          [this, message]() { sendInLoop(message.data(), message.size()); });
     }
   }
 }

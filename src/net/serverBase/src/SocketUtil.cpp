@@ -66,6 +66,11 @@ int accept(int sockfd, struct sockaddr_in6* addr) {
   return connfd;
 }
 
+int connect(int sockfd, const struct sockaddr* addr) {
+  return ::connect(sockfd, addr,
+                   static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
+}
+
 ssize_t read(int sockfd, void* buf, size_t count) {
   return ::read(sockfd, buf, count);
 }
@@ -94,6 +99,17 @@ struct sockaddr_in6 getLocalAddr(int sockfd) {
     // LOG_SYSERR << "sockets::getLocalAddr";
   }
   return localaddr;
+}
+
+struct sockaddr_in6 getPeerAddr(int sockfd) {
+  struct sockaddr_in6 peeraddr;
+  memset(&peeraddr, 0, sizeof(peeraddr));
+  socklen_t addrlen = static_cast<socklen_t>(sizeof peeraddr);
+  if (::getpeername(sockfd, reinterpret_cast<sockaddr*>(&peeraddr), &addrlen) <
+      0) {
+    // LOG_SYSERR << "sockets::getPeerAddr";
+  }
+  return peeraddr;
 }
 
 void toIp(char* buf, size_t size, const struct sockaddr* addr) {

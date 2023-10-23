@@ -22,7 +22,7 @@ class EventLoopThread : public Noncopyable {
 
  private:
   void threadFunc();
-
+  void stop();
   EventLoop* loop_{nullptr};
   bool exiting_;
   Thread thread_;

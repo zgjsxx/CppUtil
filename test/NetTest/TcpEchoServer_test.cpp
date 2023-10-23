@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
   }
   CppUtil::Common::initLog("EchoServer.log");
   LOG_DEBUG("%s", "init log")
-  InetAddress listenAddr(2007);
+  InetAddress listenAddr(2023);
   EchoServer server(listenAddr);
 
   ThreadPool threadpool("default");

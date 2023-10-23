@@ -3,6 +3,7 @@ project(NetTest)
 
 set(SOURCES 
     TcpEchoServer_test.cpp
+    TcpEchoClient_test.cpp
     TcpWebSocketServer_test.cpp
     HttpServer_test.cpp
     Buffer_test.cpp

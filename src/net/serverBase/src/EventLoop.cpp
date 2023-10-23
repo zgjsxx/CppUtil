@@ -32,10 +32,14 @@ EventLoop::EventLoop()
 }
 
 EventLoop::~EventLoop() {
-  ::close(wakeupFd_);
-  wakeupChannel_->disableAll();
-  wakeupChannel_->remove();
+  if (wakeupFd_ > 0) {
+    wakeupChannel_->disableAll();
+    wakeupChannel_->remove();
+    ::close(wakeupFd_);
+  }
 }
+
+void EventLoop::quit() { quit_ = true; }
 
 void EventLoop::loop() {
   looping_ = true;

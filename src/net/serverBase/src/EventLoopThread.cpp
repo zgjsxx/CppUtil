@@ -16,7 +16,7 @@ EventLoopThread::EventLoopThread(const ThreadInitCallback& cb,
 EventLoopThread::~EventLoopThread() {
   exiting_ = true;
   if (loop_ != nullptr) {
-    // loop_->quit();
+    loop_->quit();
     thread_.stop();
   }
 }
@@ -31,6 +31,8 @@ EventLoop* EventLoopThread::waitThreadStart() {
   }
   return loop;
 }
+
+void EventLoopThread::stop() { loop_->quit(); }
 
 void EventLoopThread::threadFunc() {
   EventLoop loop;
