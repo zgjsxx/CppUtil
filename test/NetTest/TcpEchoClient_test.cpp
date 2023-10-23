@@ -28,24 +28,17 @@ class TcpEchoClient {
   void onMessage(const TcpConnectionPtr& conn, Buffer* buf) {
     size_t len = buf->readableBytes();
     LOG_DEBUG("length: %d, data: %.*s", (int)len, (int)len, buf->peek())
-    recv_.append(buf->peek(), buf->readableBytes());
-    recv_.retrieve(buf->readableBytes());
   };
 
   void onWriteFinish(const TcpConnectionPtr& conn) { LOG_DEBUG("write finish") }
 
   void write(std::string msg) { client_.write(msg); };
 
-  void read(std::string& msg) {
-    msg.append(recv_.peek(), recv_.readableBytes());
-  };
-
   void onConnection(const TcpConnectionPtr& conn){
       LOG_DEBUG("des server connected")};
 
  private:
   TcpClient client_;
-  Buffer recv_;
 };
 
 int main() {
@@ -54,8 +47,5 @@ int main() {
   InetAddress destAddress("127.0.0.1", 2023);
   client.connect(destAddress);
   client.write("test");
-  std::string resp;
-  client.read(resp);
-  LOG_DEBUG("get msg %s", resp.c_str())
   std::cin.get();
 }
