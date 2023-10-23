@@ -16,8 +16,8 @@ TcpConnection::TcpConnection(EventLoop* loop, const std::string& name,
       localAddr_(localAddr),
       peerAddr_(peerAddr),
       state_(kConnecting),
-      socket_(new Socket(sockfd)),
-      channel_(new Channel(loop, sockfd)) {
+      socket_(std::make_unique<Socket>(sockfd)),
+      channel_(std::make_unique<Channel>(loop, sockfd)) {
   // TcpConnection is created by Acceptor
   // channel's callback is set by TcpConnection
   channel_->setReadCallback(std::bind(&TcpConnection::handleRead, this));
@@ -26,7 +26,10 @@ TcpConnection::TcpConnection(EventLoop* loop, const std::string& name,
   channel_->setErrorCallback(std::bind(&TcpConnection::handleError, this));
 }
 
-TcpConnection::~TcpConnection() {}
+TcpConnection::~TcpConnection() {
+  // loop_ refer to a borrowed obj, it does not owned by TcpConnection, so it is
+  // not needed to delete it
+}
 
 void TcpConnection::handleRead() {
   int savedErrno = 0;

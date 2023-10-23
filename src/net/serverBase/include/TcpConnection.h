@@ -3,7 +3,6 @@
 #include <any>
 #include <memory>
 #include <string>
-
 #include "common/include/Noncopyable.h"
 #include "net/serverBase/include/Buffer.h"
 #include "net/serverBase/include/InetAddress.h"
@@ -30,21 +29,31 @@ class TcpConnection : public Noncopyable,
   TcpConnection(EventLoop* loop, const std::string& name, int sockfd,
                 const InetAddress& localAddr, const InetAddress& peerAddr);
   ~TcpConnection();
+
+ public:
   enum StateE { kDisconnected, kConnecting, kConnected, kDisconnecting };
   EventLoop* getLoop() const { return loop_; }
   const std::string& name() const { return name_; }
+
+  Buffer* inputBuffer() { return &inputBuffer_; }
+  Buffer* outputBuffer() { return &outputBuffer_; }
+
   void setConnectionCallback(const ConnectionCallback& cb) {
     connectionCallback_ = cb;
   }
-
-  void shutdownInLoop();
   void setCloseCallback(const CloseCallback& cb) { closeCallback_ = cb; }
   void setMessageCallback(const MessageCallback& cb) { messageCallback_ = cb; }
+  void setWriteCompleteCallback(const WriteCompleteCallback& cb) {
+    writeCompleteCallback_ = cb;
+  }
   void setHighWaterMarkCallback(const HighWaterMarkCallback& cb,
                                 size_t highWaterMark) {
     highWaterMarkCallback_ = cb;
     highWaterMark_ = highWaterMark;
   }
+
+  void shutdownInLoop();
+  void shutdown();
   void connectEstablished();
   void connectDestroyed();
   void send(Buffer* buf);
@@ -58,7 +67,6 @@ class TcpConnection : public Noncopyable,
   void handleError();
   std::shared_ptr<void> getParser() { return parser_; }
   void setParser(std::shared_ptr<void>& parser) { parser_ = parser; }
-  void shutdown();
 
  private:
   void handleRead();
@@ -69,7 +77,7 @@ class TcpConnection : public Noncopyable,
   EventLoop* loop_{nullptr};
   const std::string name_;
   StateE state_;  // FIXME: use atomic variable
-  bool reading_;
+  bool reading_{false};
   const InetAddress localAddr_;
   const InetAddress peerAddr_;
   MessageCallback messageCallback_;
@@ -80,10 +88,10 @@ class TcpConnection : public Noncopyable,
   size_t highWaterMark_;
   std::unique_ptr<Socket> socket_;
   std::unique_ptr<Channel> channel_;
-  std::shared_ptr<void> parser_{
-      nullptr};  // used for parse a certain protocol, such as http
   Buffer inputBuffer_;
   Buffer outputBuffer_;
+  // used for parse a certain tcp protocol, such as http
+  std::shared_ptr<void> parser_{nullptr};
 };
 
 using TcpConnectionPtr = std::shared_ptr<TcpConnection>;

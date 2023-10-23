@@ -33,8 +33,7 @@ void TcpClient::connect(const InetAddress& serverAddr) {
 }
 
 void TcpClient::write(std::string msg) {
-  buf_.append(msg.c_str(), msg.size());
-  connection_->send(&buf_);
+  connection_->sendInLoop(msg.c_str(), msg.size());
 }
 
 void TcpClient::newConnection(int sockfd) {
@@ -51,7 +50,7 @@ void TcpClient::newConnection(int sockfd) {
   connection_ = conn;
   conn->setConnectionCallback(connectionCallback_);
   conn->setMessageCallback(messageCallback_);
-  //   conn->setWriteCompleteCallback(writeCompleteCallback_);
+  conn->setWriteCompleteCallback(writeCompleteCallback_);
   //   conn->setCloseCallback(
   //       std::bind(&TcpClient::removeConnection, this, _1));  // FIXME: unsafe
   conn->connectEstablished();

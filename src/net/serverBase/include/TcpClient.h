@@ -19,7 +19,7 @@ using TcpConnectionPtr = std::shared_ptr<TcpConnection>;
 using NewConnectionCallback = std::function<void(int)>;
 using ConnectionCallback = std::function<void(const TcpConnectionPtr&)>;
 using MessageCallback = std::function<void(const TcpConnectionPtr&, Buffer*)>;
-
+using WriteCompleteCallback = std::function<void(const TcpConnectionPtr&)>;
 class TcpClient {
  public:
   TcpClient(const std::string& nameArg);
@@ -37,6 +37,10 @@ class TcpClient {
     connectionCallback_ = cb;
   }
 
+  void setwriteCompleteCallback(const WriteCompleteCallback& cb) {
+    writeCompleteCallback_ = cb;
+  }
+
  private:
   EventLoop* loop_{nullptr};
   const std::string name_;
@@ -46,8 +50,7 @@ class TcpClient {
   ConnectionCallback connectionCallback_;
   MessageCallback messageCallback_;
   EventLoopThread* thread_{nullptr};
-  Buffer buf_;
-  Buffer out_;
+  WriteCompleteCallback writeCompleteCallback_;
 };
 
 }  // namespace Net

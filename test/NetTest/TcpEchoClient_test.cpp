@@ -18,6 +18,9 @@ class TcpEchoClient {
 
     client_.setConnectionCallback(
         [this](const TcpConnectionPtr& conn) { this->onConnection(conn); });
+
+    client_.setwriteCompleteCallback(
+        [this](const TcpConnectionPtr& conn) { this->onWriteFinish(conn); });
   };
 
   void connect(const InetAddress& serverAddr) { client_.connect(serverAddr); }
@@ -28,6 +31,8 @@ class TcpEchoClient {
     recv_.append(buf->peek(), buf->readableBytes());
     recv_.retrieve(buf->readableBytes());
   };
+
+  void onWriteFinish(const TcpConnectionPtr& conn) { LOG_DEBUG("write finish") }
 
   void write(std::string msg) { client_.write(msg); };
 
