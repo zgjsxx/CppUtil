@@ -195,16 +195,16 @@ class Buffer : public Noncopyable {
     return result;
   }
 
-  ///
-  /// Read int32_t from network endian
-  ///
-  /// Require: buf->readableBytes() >= sizeof(int32_t)
   int32_t readLeInt32() {
     int32_t result = peekLeInt32();
     retrieveInt32();
     return result;
   }
 
+  ///
+  /// Read int32_t from network endian
+  ///
+  /// Require: buf->readableBytes() >= sizeof(int32_t)
   int32_t readInt32() {
     int32_t result = peekInt32();
     retrieveInt32();

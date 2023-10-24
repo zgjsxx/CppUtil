@@ -1,8 +1,10 @@
 #define CATCH_CONFIG_MAIN
 
+#include <cstdio>
+#include <string>
+#include "catch.hpp"
 #include "net/serverBase/include/Buffer.h"
 
-#include "catch.hpp"
 using namespace CppUtil;
 using namespace CppUtil::Net;
 
