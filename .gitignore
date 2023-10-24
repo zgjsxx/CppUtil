@@ -3,3 +3,4 @@ build
 .VSCodeCounter
 cmake-build-debug
 cmake-build-release
+third_party/openssl_1.1.1w

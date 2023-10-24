@@ -6,6 +6,7 @@ set(UT_SOURCES
     ThreadPool_test.cpp  
     Logger_test.cpp
     SystemInfo_test.cpp
+    Hash_test.cpp
 )
 
 message(STATUS "CMAKE_SOURCE_DIR = ${CMAKE_SOURCE_DIR}")
@@ -18,6 +19,7 @@ set(DEPEND_SOURCES
     ${CMAKE_SOURCE_DIR}/src/common/src/Thread.cpp
     ${CMAKE_SOURCE_DIR}/src/common/src/ThreadPool.cpp
     ${CMAKE_SOURCE_DIR}/src/common/src/CountDownLatch.cpp
+    ${CMAKE_SOURCE_DIR}/src/common/src/Hash.cpp
 )
 
 set(CMAKE_CXX_STANDARD 17)
@@ -33,7 +35,9 @@ foreach(name ${UNITTEST_BIN})
     )
 
     target_link_libraries(
-        ${name} 
+        ${name}
+        ${CRYPTO_LIB}
+        ${SSL_LIB} 
     )
 
     
