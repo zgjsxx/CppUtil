@@ -4,6 +4,9 @@
 
 namespace CppUtil {
 namespace Common {
+
 int getCpuNum();
-}
+bool isLittleEndian();
+
+}  // namespace Common
 }  // namespace CppUtil

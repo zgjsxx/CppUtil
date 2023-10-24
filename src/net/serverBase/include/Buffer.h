@@ -176,6 +176,8 @@ class Buffer : public Noncopyable {
     append(&be32, sizeof be32);
   }
 
+  void appendLeInt32(int32_t x) { append(&x, sizeof(x)); }
+
   void appendInt16(int16_t x) {
     int16_t be16 = SockUtil::hostToNetwork16(x);
     append(&be16, sizeof be16);
@@ -197,6 +199,12 @@ class Buffer : public Noncopyable {
   /// Read int32_t from network endian
   ///
   /// Require: buf->readableBytes() >= sizeof(int32_t)
+  int32_t readLeInt32() {
+    int32_t result = peekLeInt32();
+    retrieveInt32();
+    return result;
+  }
+
   int32_t readInt32() {
     int32_t result = peekInt32();
     retrieveInt32();
@@ -235,6 +243,13 @@ class Buffer : public Noncopyable {
     int32_t be32 = 0;
     ::memcpy(&be32, peek(), sizeof be32);
     return SockUtil::networkToHost32(be32);
+  }
+
+  int32_t peekLeInt32() const {
+    assert(readableBytes() >= sizeof(int32_t));
+    int32_t be32 = 0;
+    ::memcpy(&be32, peek(), sizeof be32);
+    return be32;
   }
 
   int16_t peekInt16() const {

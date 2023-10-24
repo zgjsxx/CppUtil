@@ -6,13 +6,11 @@
 #include "net/serverBase/include/SocketUtil.h"
 
 namespace CppUtil {
-
 namespace Net {
 
 Socket::~Socket() { SockUtil::close(sockfd_); }
 
 void Socket::bind(const InetAddress& localaddr) {
-  // int ret = ::bind(sockfd_)
   SockUtil::bind(sockfd_, localaddr.getSockAddr());
 }
 

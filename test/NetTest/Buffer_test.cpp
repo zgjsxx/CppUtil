@@ -34,3 +34,21 @@ TEST_CASE("2", "Buffer") {
   buffer.retrieveAll();
   REQUIRE(buffer.readableBytes() == 0);
 }
+
+TEST_CASE("3", "Buffer") {
+  int tmp = 0x12345678;
+  Buffer buffer;
+  buffer.appendInt32(tmp);
+  int tmp2 = buffer.readInt32();
+  REQUIRE(tmp2 == 0x12345678);
+
+  tmp = 0x01;
+  buffer.appendLeInt32(tmp);
+  tmp2 = buffer.readInt32();
+  REQUIRE(tmp2 == 0x01000000);
+
+  tmp = 0x01;
+  buffer.appendLeInt32(tmp);
+  tmp2 = buffer.readLeInt32();
+  REQUIRE(tmp2 == 0x01);
+}
