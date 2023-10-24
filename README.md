@@ -1,6 +1,11 @@
 # cppUtil
 cppUtil
 
+
+dnf install perl
+
+
+
 clang-format -style=file -i main.cc
 
 common module includes:
