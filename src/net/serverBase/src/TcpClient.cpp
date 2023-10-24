@@ -12,15 +12,14 @@ namespace Net {
 
 void defaultThreadInitCallback(EventLoop*) {}
 
-TcpClient::TcpClient(const std::string& name)
-    : loop_(new EventLoop()), name_(name) {
-  char buf[name_.size() + 32] = {0};
-  snprintf(buf, sizeof(buf), "%s%d", name_.c_str(), 0);
-  thread_ = new EventLoopThread(defaultThreadInitCallback, buf);
+TcpClient::TcpClient(const std::string& name) : name_(name) {
+  thread_ = new EventLoopThread(defaultThreadInitCallback, name);
+  // loop_ refer to a stack variable
   loop_ = thread_->waitThreadStart();
 }
 
 TcpClient::~TcpClient() {
+  thread_->stop();
   delete thread_;
   // Notice loop_ refer to a stack variable, so do not delete it
 }
@@ -30,6 +29,14 @@ void TcpClient::connect(const InetAddress& serverAddr) {
   int ret = SockUtil::connect(clientFd_, serverAddr.getSockAddr());
   int saveErrno = (ret == 0) ? 0 : errno;
   newConnection(clientFd_);
+  connected_ = true;
+}
+
+void TcpClient::disconnect() {
+  if (connection_) {
+    connection_->shutdown();
+  }
+  connected_ = false;
 }
 
 void TcpClient::write(std::string msg) {

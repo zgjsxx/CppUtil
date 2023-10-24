@@ -4,7 +4,7 @@
 
 #include <mutex>
 #include <string>
-
+#include <string.h>
 #include "common/include/Status.h"
 
 namespace CppUtil {
@@ -16,6 +16,11 @@ enum LogLevel {
   LogLevelWarn = 0x02,
   LogLevelError = 0x03
 };
+
+inline const char* baseFileName(const char* filepath) {
+  const char* lastSlash = strrchr(filepath, '/');
+  return nullptr == lastSlash ? filepath : lastSlash + 1;
+}
 
 class ILogger {
  public:
@@ -57,17 +62,21 @@ class FileLogger : public ILogger {
 };
 
 extern ILogger* g_logger;
-#define LOG_DEBUG(msg, ...)                                                \
-  CppUtil::Common::g_logger->log(CppUtil::Common::LogLevelDebug, __FILE__, \
+#define LOG_DEBUG(msg, ...)                                               \
+  CppUtil::Common::g_logger->log(CppUtil::Common::LogLevelDebug,          \
+                                 CppUtil::Common::baseFileName(__FILE__), \
                                  __FUNCTION__, __LINE__, msg, ##__VA_ARGS__);
 #define LOG_INFO(msg, ...)                                                \
-  CppUtil::Common::g_logger->log(CppUtil::Common::LogLevelInfo, __FILE__, \
+  CppUtil::Common::g_logger->log(CppUtil::Common::LogLevelInfo,           \
+                                 CppUtil::Common::baseFileName(__FILE__), \
                                  __FUNCTION__, __LINE__, msg, ##__VA_ARGS__);
 #define LOG_WARN(msg, ...)                                                \
-  CppUtil::Common::g_logger->log(CppUtil::Common::LogLevelWarn, __FILE__, \
+  CppUtil::Common::g_logger->log(CppUtil::Common::LogLevelWarn,           \
+                                 CppUtil::Common::baseFileName(__FILE__), \
                                  __FUNCTION__, __LINE__, msg, ##__VA_ARGS__);
-#define LOG_ERROR(msg, ...)                                                \
-  CppUtil::Common::g_logger->log(CppUtil::Common::LogLevelError, __FILE__, \
+#define LOG_ERROR(msg, ...)                                               \
+  CppUtil::Common::g_logger->log(CppUtil::Common::LogLevelError,          \
+                                 CppUtil::Common::baseFileName(__FILE__), \
                                  __FUNCTION__, __LINE__, msg, ##__VA_ARGS__);
 
 inline void initLog(const std::string& filename) {

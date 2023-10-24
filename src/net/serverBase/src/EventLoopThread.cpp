@@ -14,11 +14,11 @@ EventLoopThread::EventLoopThread(const ThreadInitCallback& cb,
       callback_(cb) {}
 
 EventLoopThread::~EventLoopThread() {
-  exiting_ = true;
   if (loop_ != nullptr) {
     loop_->quit();
     thread_.stop();
   }
+  exiting_ = true;
 }
 
 EventLoop* EventLoopThread::waitThreadStart() {
@@ -32,7 +32,10 @@ EventLoop* EventLoopThread::waitThreadStart() {
   return loop;
 }
 
-void EventLoopThread::stop() { loop_->quit(); }
+void EventLoopThread::stop() {
+  loop_->quit();
+  thread_.stop();
+}
 
 void EventLoopThread::threadFunc() {
   EventLoop loop;

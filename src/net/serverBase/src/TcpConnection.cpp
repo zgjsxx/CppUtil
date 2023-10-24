@@ -127,11 +127,9 @@ void TcpConnection::sendInLoop(const void* data, size_t len) {
         loop_->queueInLoop(
             std::bind(writeCompleteCallback_, shared_from_this()));
       }
-    } else  // nwrote < 0
-    {
+    } else {  // nwrote < 0
       nwrote = 0;
       if (errno != EWOULDBLOCK) {
-        // LOG_SYSERR << "TcpConnection::sendInLoop";
         if (errno == EPIPE || errno == ECONNRESET)  // FIXME: any others?
         {
           faultError = true;

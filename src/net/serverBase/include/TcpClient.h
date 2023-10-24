@@ -51,6 +51,7 @@ class TcpClient {
   MessageCallback messageCallback_;
   EventLoopThread* thread_{nullptr};
   WriteCompleteCallback writeCompleteCallback_;
+  bool connected_{false};
 };
 
 }  // namespace Net

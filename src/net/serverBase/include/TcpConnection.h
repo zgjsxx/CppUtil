@@ -67,6 +67,7 @@ class TcpConnection : public Noncopyable,
   void handleError();
   std::shared_ptr<void> getParser() { return parser_; }
   void setParser(std::shared_ptr<void>& parser) { parser_ = parser; }
+  void readInput(std::string& msg);
 
  private:
   void handleRead();
