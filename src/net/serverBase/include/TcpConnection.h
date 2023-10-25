@@ -66,7 +66,10 @@ class TcpConnection : public Noncopyable,
   const InetAddress& peerAddress() const { return peerAddr_; }
   void handleError();
   std::shared_ptr<void> getParser() { return parser_; }
+  std::shared_ptr<void> getContext() { return context_; }
   void setParser(std::shared_ptr<void>& parser) { parser_ = parser; }
+  void setContext(std::shared_ptr<void>& context) { context_ = context; }
+
   void readInput(std::string& msg);
 
  private:
@@ -93,6 +96,8 @@ class TcpConnection : public Noncopyable,
   Buffer outputBuffer_;
   // used for parse a certain tcp protocol, such as http
   std::shared_ptr<void> parser_{nullptr};
+  // used for application layer context, such as http/websocket
+  std::shared_ptr<void> context_{nullptr};
 };
 
 using TcpConnectionPtr = std::shared_ptr<TcpConnection>;

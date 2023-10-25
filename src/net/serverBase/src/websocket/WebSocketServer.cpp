@@ -1,9 +1,11 @@
 #include "common/include/Logger.h"
 #include "common/include/StringUtil.h"
+#include "common/include/Hash.h"
 #include "net/serverBase/include/websocket/WebSocketServer.h"
 #include "net/serverBase/include/TcpConnection.h"
 #include "net/serverBase/include/http/HttpRequest.h"
 #include "net/serverBase/include/http/HttpResponse.h"
+
 using namespace CppUtil;
 using namespace CppUtil::Net;
 
@@ -21,6 +23,13 @@ void defaultHttpCallback(const HttpRequest&, HttpResponse* resp) {
 }  // namespace CppUtil
 
 using namespace std::placeholders;
+
+struct WebSocketContext {
+  enum State { handshake_start = 0, handshake_finish = 1 };
+
+  State state_{handshake_start};
+};
+
 WebSocketServer::WebSocketServer(const InetAddress& listenAddr,
                                  const string& name, TcpServer::Option option)
     : server_(listenAddr, name, option),
@@ -40,6 +49,10 @@ void WebSocketServer::onConnection(const TcpConnectionPtr& conn) {
     HttpParser* httpParser = (HttpParser*)parser.get();
     httpParser->init(HTTP_BOTH);
     conn->setParser(parser);
+
+    std::shared_ptr<void> context = std::make_shared<WebSocketContext>();
+    WebSocketContext* websosketContext = (WebSocketContext*)context.get();
+    conn->setContext(context);
   }
 }
 
@@ -71,11 +84,19 @@ void WebSocketServer::onRequest(const TcpConnectionPtr& conn,
       connection == "close" ||
       (req.getVersion() == HttpRequest::kHttp10 && connection != "keep-alive");
   HttpResponse response(close);
-  if (httpApiMap_.find(req.getUrl()) != httpApiMap_.end()) {
-    httpCallback_ = httpApiMap_[req.getUrl()];
-  }
+  std::shared_ptr<void> context = conn->getContext();
+  WebSocketContext* websosketContext = (WebSocketContext*)context.get();
+  websosketContext->state_ = WebSocketContext::handshake_finish;
+  response.setStatusCode((http_status)101);
+  response.addHeader("Upgrade", "websocket");
+  std::string SecWebSocketKey = req.getHeader("Sec-WebSocket-Key");
 
-  httpCallback_(req, &response);
+  SecWebSocketKey += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+  std::string SecWebSocketAccept = Common::sha1sum(SecWebSocketKey);
+  SecWebSocketAccept =
+      Common::base64_encode((const unsigned char*)SecWebSocketAccept.c_str(),
+                            SecWebSocketAccept.size());
+  response.addHeader("Sec-WebSocket-Accept", SecWebSocketAccept);
 
   Buffer buf;
   response.appendToBuffer(&buf);
