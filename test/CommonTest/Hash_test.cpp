@@ -22,6 +22,22 @@ TEST_CASE("sha1sumHex-2", "Hash") {
   REQUIRE(res == "2fb5e13419fc89246865e7a324f476ec624e8740");
 }
 
+TEST_CASE("sha256sumHex-1", "Hash") {
+  std::string str = "0123456789";
+  std::string res = sha256sumHex(str);
+  std::cout << res << std::endl;
+  REQUIRE(res ==
+          "84d89877f0d4041efb6bf91a16f0248f2fd573e6af05c19f96bedb9f882f7882");
+}
+
+TEST_CASE("sha256sumHex-2", "Hash") {
+  std::string str = "helloworld";
+  std::string res = sha256sumHex(str);
+  std::cout << res << std::endl;
+  REQUIRE(res ==
+          "936a185caaa266bb9cbe981e9e05cb78cd732b0b3280eb944412bb6f8f8f07af");
+}
+
 // right value is get from online website
 // https://base64.guru/converter/encode/hex
 TEST_CASE("base64_encode-1", "Hash") {

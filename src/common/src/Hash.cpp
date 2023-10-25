@@ -9,6 +9,10 @@ static const std::string base64_chars =
     "abcdefghijklmnopqrstuvwxyz"
     "0123456789+/";
 
+static inline bool is_base64(unsigned char c) {
+  return (isalnum(c) || (c == '+') || (c == '/'));
+}
+
 std::string sha1sumHex(std::string& str) {
   unsigned char output[SHA_DIGEST_LENGTH] = {0};
   SHA1((const unsigned char*)str.c_str(), str.size(), output);
@@ -35,8 +39,30 @@ std::string sha1sum(std::string& str) {
   return res;
 }
 
-static inline bool is_base64(unsigned char c) {
-  return (isalnum(c) || (c == '+') || (c == '/'));
+std::string sha256sum(std::string& str) {
+  unsigned char output[SHA_DIGEST_LENGTH] = {0};
+  SHA256((const unsigned char*)str.c_str(), str.size(), output);
+  std::string res;
+  res.append((const char*)output, SHA_DIGEST_LENGTH);
+  return res;
+}
+
+std::string sha256sumHex(std::string& str) {
+  unsigned char output[SHA256_DIGEST_LENGTH] = {0};
+  SHA256((const unsigned char*)str.c_str(), str.size(), output);
+  unsigned char output_hex[2 * SHA256_DIGEST_LENGTH] = {0};
+  int j = 0;
+  unsigned int c;
+
+  for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
+    c = (output[i] >> 4) & 0x0f;
+    output_hex[j++] = hex_chars[c];
+    output_hex[j++] = hex_chars[output[i] & 0x0f];
+  }
+
+  std::string res;
+  res.append((const char*)output_hex, 2 * SHA256_DIGEST_LENGTH);
+  return res;
 }
 
 std::string base64_encode(unsigned char const* bytes_to_encode,

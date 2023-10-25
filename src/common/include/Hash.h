@@ -14,5 +14,10 @@ std::string base64_decode(std::string const& encoded_string);
 std::string sha1sumHex(std::string& str);
 
 std::string sha1sum(std::string& str);
+
+// output is hex string
+std::string sha256sumHex(std::string& str);
+
+std::string sha256sum(std::string& str);
 }  // namespace Common
 }  // namespace CppUtil
