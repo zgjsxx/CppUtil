@@ -36,6 +36,7 @@ class WebSocketServer : Noncopyable {
   using TcpConnectionPtr = std::shared_ptr<TcpConnection>;
   void onConnection(const TcpConnectionPtr& conn);
   void onMessage(const TcpConnectionPtr& conn, Buffer* buf);
+  void onWebSocketRequest(const TcpConnectionPtr& conn, std::string& msg);
   void onRequest(const TcpConnectionPtr&, const HttpRequest&);
   TcpServer server_;
   HttpCallback httpCallback_;
