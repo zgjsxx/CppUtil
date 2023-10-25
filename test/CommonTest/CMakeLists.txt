@@ -7,6 +7,7 @@ set(UT_SOURCES
     Logger_test.cpp
     SystemInfo_test.cpp
     Hash_test.cpp
+    StringUtil_test.cpp
 )
 
 message(STATUS "CMAKE_SOURCE_DIR = ${CMAKE_SOURCE_DIR}")
@@ -20,6 +21,7 @@ set(DEPEND_SOURCES
     ${CMAKE_SOURCE_DIR}/src/common/src/ThreadPool.cpp
     ${CMAKE_SOURCE_DIR}/src/common/src/CountDownLatch.cpp
     ${CMAKE_SOURCE_DIR}/src/common/src/Hash.cpp
+    ${CMAKE_SOURCE_DIR}/src/common/src/StringUtil.cpp
 )
 
 set(CMAKE_CXX_STANDARD 17)

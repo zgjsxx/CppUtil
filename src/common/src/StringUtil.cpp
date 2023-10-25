@@ -8,7 +8,7 @@ void strToUpper(std::string& src) {
 }
 
 void strToUpper(const std::string& src, std::string& dest) {
-  dest.reserve(src.size());
+  dest.resize(src.size());
   std::transform(src.begin(), src.end(), dest.begin(), ::toupper);
 }
 
@@ -17,7 +17,7 @@ void strToLower(std::string& src) {
 }
 
 void strToLower(const std::string& src, std::string& dest) {
-  dest.reserve(src.size());
+  dest.resize(src.size());
   std::transform(src.begin(), src.end(), dest.begin(), ::tolower);
 }
 }  // namespace Common
