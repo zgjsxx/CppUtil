@@ -89,6 +89,7 @@ void WebSocketServer::onRequest(const TcpConnectionPtr& conn,
   websosketContext->state_ = WebSocketContext::handshake_finish;
   response.setStatusCode((http_status)101);
   response.addHeader("Upgrade", "websocket");
+  response.addHeader("Connection", "Upgrade");
   std::string SecWebSocketKey = req.getHeader("Sec-WebSocket-Key");
 
   SecWebSocketKey += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";

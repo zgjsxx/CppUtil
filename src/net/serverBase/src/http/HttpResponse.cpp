@@ -17,9 +17,13 @@ void HttpResponse::appendToBuffer(Buffer* output) const {
   if (closeConnection_) {
     output->append("Connection: close\r\n");
   } else {
-    snprintf(buf, sizeof buf, "Content-Length: %zd\r\n", body_.size());
-    output->append(buf);
-    output->append("Connection: Keep-Alive\r\n");
+    if (body_.size() != 0) {
+      snprintf(buf, sizeof buf, "Content-Length: %zd\r\n", body_.size());
+      output->append(buf);
+    }
+    if (headers_.find("Connection") == headers_.end()) {
+      output->append("Connection: Keep-Alive\r\n");
+    }
   }
 
   for (const auto& header : headers_) {

@@ -22,7 +22,7 @@ using namespace CppUtil;
 using namespace CppUtil::Net;
 
 int main() {
-  CppUtil::Common::initLog("WebSoskcetServer_test.log");
+  CppUtil::Common::initLog("WebSocketServer_test.log");
   LOG_DEBUG("%s", "init log")
   InetAddress listenAddr(8080);
   WebSocketServer server(listenAddr, "websocket");
