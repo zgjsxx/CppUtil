@@ -3,6 +3,7 @@
 namespace CppUtil {
 namespace Common {
 
+const int HEXCHAR_SIZE = 16;
 static const char hex_chars[] = "0123456789abcdef";
 static const std::string base64_chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -13,19 +14,47 @@ static inline bool is_base64(unsigned char c) {
   return (isalnum(c) || (c == '+') || (c == '/'));
 }
 
+static char getIndex(char c) {
+  for (int i = 0; i < HEXCHAR_SIZE; ++i) {
+    if (c == hex_chars[i]) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+void convertHexStringToBinary(const unsigned char* ori, int len,
+                              unsigned char* des, int desLen) {
+  // input  |1d|2a|   ==> output |00011101|00101010
+  int j = 0;
+  for (int i = 0; i < len; i++) {
+    char c = getIndex(ori[i]);
+    if (i % 2 == 0) {
+      des[i / 2] |= (c << 4);
+    } else {
+      des[i / 2] |= c;
+    }
+  }
+}
+
+void convertBinaryToHexString(const unsigned char* ori, int len,
+                              unsigned char* des, int desLen) {
+  // input |00011101|00101010|   ==> output |1d|2a|
+  unsigned int c;
+  int j = 0;
+  for (int i = 0; i < len; ++i) {
+    c = (ori[i] >> 4) & 0x0f;
+    des[j++] = hex_chars[c];
+    des[j++] = hex_chars[ori[i] & 0x0f];
+  }
+}
+
 std::string sha1sumHex(std::string& str) {
   unsigned char output[SHA_DIGEST_LENGTH] = {0};
   SHA1((const unsigned char*)str.c_str(), str.size(), output);
   unsigned char output_hex[2 * SHA_DIGEST_LENGTH] = {0};
-  int j = 0;
-  unsigned int c;
-
-  for (int i = 0; i < SHA_DIGEST_LENGTH; ++i) {
-    c = (output[i] >> 4) & 0x0f;
-    output_hex[j++] = hex_chars[c];
-    output_hex[j++] = hex_chars[output[i] & 0x0f];
-  }
-
+  convertBinaryToHexString(output, SHA_DIGEST_LENGTH, output_hex,
+                           2 * SHA_DIGEST_LENGTH);
   std::string res;
   res.append((const char*)output_hex, 2 * SHA_DIGEST_LENGTH);
   return res;
@@ -39,11 +68,31 @@ std::string sha1sum(std::string& str) {
   return res;
 }
 
+// output is hex string
+std::string sha224sumHex(std::string& str) {
+  unsigned char output[SHA224_DIGEST_LENGTH] = {0};
+  SHA224((const unsigned char*)str.c_str(), str.size(), output);
+  unsigned char output_hex[2 * SHA224_DIGEST_LENGTH] = {0};
+  convertBinaryToHexString(output, SHA224_DIGEST_LENGTH, output_hex,
+                           2 * SHA224_DIGEST_LENGTH);
+  std::string res;
+  res.append((const char*)output_hex, 2 * SHA224_DIGEST_LENGTH);
+  return res;
+}
+
+std::string sha224sum(std::string& str) {
+  unsigned char output[SHA224_DIGEST_LENGTH] = {0};
+  SHA224((const unsigned char*)str.c_str(), str.size(), output);
+  std::string res;
+  res.append((const char*)output, SHA224_DIGEST_LENGTH);
+  return res;
+}
+
 std::string sha256sum(std::string& str) {
-  unsigned char output[SHA_DIGEST_LENGTH] = {0};
+  unsigned char output[SHA256_DIGEST_LENGTH] = {0};
   SHA256((const unsigned char*)str.c_str(), str.size(), output);
   std::string res;
-  res.append((const char*)output, SHA_DIGEST_LENGTH);
+  res.append((const char*)output, SHA256_DIGEST_LENGTH);
   return res;
 }
 
@@ -51,17 +100,50 @@ std::string sha256sumHex(std::string& str) {
   unsigned char output[SHA256_DIGEST_LENGTH] = {0};
   SHA256((const unsigned char*)str.c_str(), str.size(), output);
   unsigned char output_hex[2 * SHA256_DIGEST_LENGTH] = {0};
-  int j = 0;
-  unsigned int c;
-
-  for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
-    c = (output[i] >> 4) & 0x0f;
-    output_hex[j++] = hex_chars[c];
-    output_hex[j++] = hex_chars[output[i] & 0x0f];
-  }
+  convertBinaryToHexString(output, SHA256_DIGEST_LENGTH, output_hex,
+                           2 * SHA256_DIGEST_LENGTH);
 
   std::string res;
   res.append((const char*)output_hex, 2 * SHA256_DIGEST_LENGTH);
+  return res;
+}
+
+std::string sha384sum(std::string& str) {
+  unsigned char output[SHA384_DIGEST_LENGTH] = {0};
+  SHA384((const unsigned char*)str.c_str(), str.size(), output);
+  std::string res;
+  res.append((const char*)output, SHA384_DIGEST_LENGTH);
+  return res;
+}
+
+std::string sha384sumHex(std::string& str) {
+  unsigned char output[SHA384_DIGEST_LENGTH] = {0};
+  SHA384((const unsigned char*)str.c_str(), str.size(), output);
+  unsigned char output_hex[2 * SHA384_DIGEST_LENGTH] = {0};
+  convertBinaryToHexString(output, SHA384_DIGEST_LENGTH, output_hex,
+                           2 * SHA384_DIGEST_LENGTH);
+  std::string res;
+  res.append((const char*)output_hex, 2 * SHA384_DIGEST_LENGTH);
+  return res;
+}
+
+std::string sha512sum(std::string& str) {
+  unsigned char output[SHA512_DIGEST_LENGTH] = {0};
+  SHA512((const unsigned char*)str.c_str(), str.size(), output);
+  std::string res;
+  res.append((const char*)output, SHA512_DIGEST_LENGTH);
+  return res;
+}
+
+std::string sha512sumHex(std::string& str) {
+  unsigned char output[SHA512_DIGEST_LENGTH] = {0};
+  SHA512((const unsigned char*)str.c_str(), str.size(), output);
+  unsigned char output_hex[2 * SHA512_DIGEST_LENGTH] = {0};
+
+  convertBinaryToHexString(output, SHA512_DIGEST_LENGTH, output_hex,
+                           2 * SHA512_DIGEST_LENGTH);
+  std::string res;
+  res.append((const char*)output_hex, 2 * SHA512_DIGEST_LENGTH);
   return res;
 }
 
