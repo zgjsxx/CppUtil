@@ -9,6 +9,8 @@ set(SOURCES
     Buffer_test.cpp
     HttpParser_test.cpp
     WebSocketServer_test.cpp
+    SelfDefineProtocol_test.cpp
+    SimpleProtoParser_test.cpp
 )
 
 string(REPLACE ".cpp" "" UNITTEST_BIN  "${SOURCES}")
@@ -19,12 +21,14 @@ foreach(name ${UNITTEST_BIN})
         ${name} 
         PUBLIC ${CMAKE_SOURCE_DIR}/src
         PUBLIC ${CMAKE_SOURCE_DIR}/third_party/catch2
+        PUBLIC ${CMAKE_SOURCE_DIR}/third_party/jsoncpp-1.9.5/include
     )
 
     target_link_libraries(
         ${name} 
         vcommon
         vnet
+        ${JSONCPP_LIB}
     )
     target_compile_options(${name} PRIVATE -std=c++17)
     

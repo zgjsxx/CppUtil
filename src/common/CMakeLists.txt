@@ -31,14 +31,17 @@ target_include_directories(
 find_library(
     CRYPTO_LIB
     NAMES libcrypto.so
-    PATHS ${CMAKE_BINARY_DIR}/lib
+    PATHS ${CMAKE_BINARY_DIR}/lib NO_DEFAULT_PATH
 )
 
 find_library(
     SSL_LIB
     NAMES libssl.so
-    PATHS ${CMAKE_BINARY_DIR}/lib
+    PATHS ${CMAKE_BINARY_DIR}/lib NO_DEFAULT_PATH
 )
+
+message(STATUS "CRYPTO_LIB = ${CRYPTO_LIB}") 
+message(STATUS "SSL_LIB = ${SSL_LIB}") 
 
 target_link_libraries(
     ${PROJECT_NAME} 
