@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <vector>
 #include <string>
+#include <string.h>
 
 const uint8_t MY_PROTO_MAGIC = 88;
 const uint32_t MY_PROTO_MAX_SIZE = 10 * 1024 * 1024;  // 10M
@@ -24,6 +25,14 @@ struct SimpleProtoMsg {
   SimpleProtoHeader head;
   std::string body;
 };
+
+void encode(SimpleProtoMsg *pMsg, uint8_t *pData) {
+  uint32_t bodyLen = (uint32_t)pMsg->body.size();
+  pMsg->head.len = bodyLen;
+
+  memcpy(pData, &pMsg->head, sizeof(pMsg->head));
+  memcpy(pData + MY_PROTO_HEAD_SIZE, pMsg->body.data(), pMsg->body.size());
+}
 
 class SimpleProtoParser {
  public:
