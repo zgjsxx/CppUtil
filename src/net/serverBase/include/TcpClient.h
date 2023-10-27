@@ -32,6 +32,7 @@ class TcpClient {
 
   void write(std::string msg);
   void newConnection(int sockfd);
+  void removeConnection(const TcpConnectionPtr& conn);
   void setMessageCallback(const MessageCallback& cb) { messageCallback_ = cb; }
   void setConnectionCallback(const ConnectionCallback& cb) {
     connectionCallback_ = cb;

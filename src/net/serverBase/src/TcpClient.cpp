@@ -58,9 +58,13 @@ void TcpClient::newConnection(int sockfd) {
   conn->setConnectionCallback(connectionCallback_);
   conn->setMessageCallback(messageCallback_);
   conn->setWriteCompleteCallback(writeCompleteCallback_);
-  //   conn->setCloseCallback(
-  //       std::bind(&TcpClient::removeConnection, this, _1));  // FIXME: unsafe
+  conn->setCloseCallback(
+      [this](const TcpConnectionPtr& conn) { this->removeConnection(conn); });
   conn->connectEstablished();
 }
+void TcpClient::removeConnection(const TcpConnectionPtr& conn) {
+  loop_->queueInLoop(std::bind(&TcpConnection::connectDestroyed, conn));
+}
+
 }  // namespace Net
 }  // namespace CppUtil
