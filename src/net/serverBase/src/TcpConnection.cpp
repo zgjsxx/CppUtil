@@ -83,7 +83,9 @@ void TcpConnection::handleClose() {
   channel_->disableAll();
   TcpConnectionPtr guardThis(shared_from_this());
   connectionCallback_(guardThis);
-  closeCallback_(guardThis);
+  if (closeCallback_) {
+    closeCallback_(guardThis);
+  }
 }
 
 void TcpConnection::connectEstablished() {
