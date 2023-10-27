@@ -25,6 +25,7 @@ set(NET_SOURCES
     serverBase/src/http/HttpParser.cpp
     serverBase/src/websocket/WebSocketServer.cpp
     serverBase/src/websocket/WebSocketParser.cpp
+    serverBase/src/simpleproto/SimpleProtoServer.cpp
     serverBase/src/TcpClient.cpp
     protocol/http/http_parser.c
     protocol/websocket/websocket_parser.c

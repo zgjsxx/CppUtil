@@ -41,7 +41,11 @@ foreach(name ${UNITTEST_BIN})
         ${CRYPTO_LIB}
         ${SSL_LIB} 
     )
-
-    
-    add_test(NAME, ${name} COMMAND ${name})
 endforeach()
+
+add_test(NAME Status_test COMMAND Status_test)
+add_test(NAME ThreadPool_test COMMAND ThreadPool_test)
+add_test(NAME Logger_test COMMAND Logger_test)
+add_test(NAME SystemInfo_test COMMAND SystemInfo_test)
+add_test(NAME Hash_test COMMAND Hash_test)
+add_test(NAME StringUtil_test COMMAND StringUtil_test)

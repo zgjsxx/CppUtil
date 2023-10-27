@@ -2,19 +2,17 @@
 
 void SimpleProtoParser::init() { parserStatus_ = ON_PARSER_INIT; }
 
-void SimpleProtoParser::clear() { reserved_.clear(); }
+void SimpleProtoParser::clear() {
+  reserved_.clear();
+  curData_ = nullptr;
+  parserStatus_ = ON_PARSER_INIT;
+}
 
 void SimpleProtoParser::parseHeader() {
   uint8_t *endData_ = (uint8_t *)&*reserved_.end();
-  if (endData_ - curData_ < MY_PROTO_HEAD_SIZE) {
+  if (endData_ - curData_ < SIMPLE_PROTO_HEAD_SIZE) {
     return;
   }
-
-  msg_.head.version = *(uint16_t *)curData_;
-  curData_ += 2;
-
-  msg_.head.magic = *(uint16_t *)curData_;
-  curData_ += 2;
 
   msg_.head.len = *(uint32_t *)curData_;
   curData_ += 4;
