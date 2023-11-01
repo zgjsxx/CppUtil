@@ -16,6 +16,7 @@ set(COMMON_SOURCES
     src/SystemInfo.cpp
     src/StringUtil.cpp
     src/Hash.cpp
+    src/ScopeExit.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED)

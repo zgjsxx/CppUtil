@@ -1,10 +1,8 @@
-#include "net/serverBase/include/SocketUtil.h"
-
 #include <netinet/tcp.h>
 #include <unistd.h>
-
 #include <cstring>
-
+#include "net/serverBase/include/SocketUtil.h"
+#define SOCKUTIL_ERR -1;
 namespace CppUtil {
 
 namespace Net {
@@ -14,7 +12,7 @@ int createNonblocking(sa_family_t family) {
   int sockfd =
       ::socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
   if (sockfd < 0) {
-    //
+    return SOCKUTIL_ERR;
   }
   return sockfd;
 }

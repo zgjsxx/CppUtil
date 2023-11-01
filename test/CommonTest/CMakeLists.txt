@@ -8,6 +8,7 @@ set(UT_SOURCES
     SystemInfo_test.cpp
     Hash_test.cpp
     StringUtil_test.cpp
+    ScopeExit_test.cpp
 )
 
 message(STATUS "CMAKE_SOURCE_DIR = ${CMAKE_SOURCE_DIR}")
@@ -22,6 +23,7 @@ set(DEPEND_SOURCES
     ${CMAKE_SOURCE_DIR}/src/common/src/CountDownLatch.cpp
     ${CMAKE_SOURCE_DIR}/src/common/src/Hash.cpp
     ${CMAKE_SOURCE_DIR}/src/common/src/StringUtil.cpp
+    ${CMAKE_SOURCE_DIR}/src/common/src/ScopeExit.cpp
 )
 
 set(CMAKE_CXX_STANDARD 17)
@@ -49,3 +51,4 @@ add_test(NAME Logger_test COMMAND Logger_test)
 add_test(NAME SystemInfo_test COMMAND SystemInfo_test)
 add_test(NAME Hash_test COMMAND Hash_test)
 add_test(NAME StringUtil_test COMMAND StringUtil_test)
+add_test(NAME ScopeExit_test COMMAND ScopeExit_test)
