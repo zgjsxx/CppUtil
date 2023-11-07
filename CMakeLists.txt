@@ -11,17 +11,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
-
+# set the run-time used lib find path
 set(CMAKE_INSTALL_RPATH "${ORIGIN}/../lib")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-find_library(
-    JSONCPP_LIB
-    NAMES libjsoncpp.so
-    PATHS ${CMAKE_BINARY_DIR}/lib NO_DEFAULT_PATH
+set(CMAKE_CXX_FLAGS
+    -Werror=format   #used to show log-print related errors
 )
 
-message(STATUS "JSONCPP_LIB = ${JSONCPP_LIB}")
 add_subdirectory(third_party/jsoncpp-1.9.5)
 add_subdirectory(src)
 

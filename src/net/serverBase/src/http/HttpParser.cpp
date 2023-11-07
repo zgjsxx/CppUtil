@@ -67,7 +67,7 @@ Common::Status HttpParser::parseMsg(const char* buf, int len) {
   int wholeSize = len;
   while (wholeSize > 0) {
     ssize_t consumed = http_parser_execute(&parser_, &settings_, buf, len);
-    LOG_DEBUG("consumed size = %d", consumed)
+    LOG_DEBUG("consumed size = %ld", consumed)
     enum http_errno code = HTTP_PARSER_ERRNO(&parser_);
     if (code != HPE_OK) {
       return {(int)code, "http parser failed"};

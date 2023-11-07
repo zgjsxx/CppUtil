@@ -31,8 +31,10 @@ class ILogger {
   virtual Status init() = 0;
   virtual void log(LogLevel level, const char* file, const char* func, int line,
                    const char* fmt, va_list args) = 0;
+
   virtual void log(LogLevel level, const char* file, const char* func, int line,
-                   const char* fmt, ...) = 0;
+                   const char* fmt, ...)
+      __attribute__((format(printf, 6, 7))) = 0;
 };
 
 class FileLogger : public ILogger {
@@ -45,7 +47,8 @@ class FileLogger : public ILogger {
   virtual void log(LogLevel level, const char* file, const char* func, int line,
                    const char* fmt, va_list args) override;
   virtual void log(LogLevel level, const char* file, const char* func, int line,
-                   const char* fmt, ...) override;
+                   const char* fmt, ...) override
+      __attribute__((format(printf, 6, 7)));
   bool addLogHeader(char* buffer, int size, const char* level, int* psize,
                     const char* file, const char* func, int line);
   void writeLog(char* str_log, int size, int level);

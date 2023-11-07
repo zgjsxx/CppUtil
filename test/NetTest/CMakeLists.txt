@@ -1,6 +1,15 @@
 cmake_minimum_required(VERSION 3.17)
 project(NetTest)
 
+# find_library(
+#     JSONCPP_LIB
+#     NAMES libjsoncpp.so
+#     PATHS ${CMAKE_BINARY_DIR}/lib NO_DEFAULT_PATH
+# )
+
+set(JSONCPP_LIB
+   ${CMAKE_BINARY_DIR}/lib/libjsoncpp.so)
+
 set(SOURCES 
     TcpEchoServer_test.cpp
     TcpEchoClient_test.cpp
