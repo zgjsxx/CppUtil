@@ -1,11 +1,16 @@
 cmake_minimum_required(VERSION 3.17)
-
 project(CppUtil)
 
-message(STATUS "CMAKE_OUTPUT_LIB_PATH = ${CMAKE_CURRENT_BINARY_DIR}/lib") 
+message(STATUS "CMAKE_OUTPUT_LIB_PATH = ${CMAKE_CURRENT_BINARY_DIR}/lib")
 
+# build openssl
 # build_openssl.sh <openssl_path> <install_lib_path>
-execute_process(COMMAND sh ${CMAKE_CURRENT_LIST_DIR}/build_openssl.sh ${CMAKE_CURRENT_LIST_DIR}/third_party/openssl_1.1.1w   ${CMAKE_CURRENT_BINARY_DIR})
+execute_process(COMMAND sh ${CMAKE_CURRENT_LIST_DIR}/scripts/build_openssl.sh ${CMAKE_CURRENT_LIST_DIR}/third_party/openssl_1.1.1w   ${CMAKE_CURRENT_BINARY_DIR})
+
+# build srs-state-thread
+# build_statethread.sh <statethread_path> <install_lib_path>
+execute_process(COMMAND sh ${CMAKE_CURRENT_LIST_DIR}/scripts/build_statethread.sh ${CMAKE_CURRENT_LIST_DIR}/third_party/state-threads-1.9.5   ${CMAKE_CURRENT_BINARY_DIR})
+
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
