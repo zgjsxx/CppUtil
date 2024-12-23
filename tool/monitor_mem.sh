@@ -35,6 +35,16 @@ get_peak_memory() {
     fi
 }
 
+# 获取进程的虚拟内存占用
+get_virtual_memory() {
+    local pid=$1
+    if [ -f "/proc/$pid/status" ]; then
+        awk -F':\t' '/VmSize/ {print $2}' /proc/$pid/status
+    else
+        echo "N/A"
+    fi
+}
+
 # 将KB转为MB
 convert_kb_to_mb() {
     echo "scale=2; $1 / 1024" | bc
@@ -45,11 +55,13 @@ monitor_process() {
     local pid=$1
     local peak_mem=$(get_peak_memory $pid)
     local peak_mem_value
+    local virtual_mem
+    local virtual_mem_value
 
     # 提取峰值内存占用值（去除单位KB）
     peak_mem_value=$(echo $peak_mem | awk '{print $1}')
     peak_mem_value=$(convert_kb_to_mb $peak_mem_value)  # 转换为MB
-    
+
     echo "Monitoring process with PID: $pid"
     echo "Peak memory usage: ${peak_mem_value} MB"
 
@@ -70,9 +82,14 @@ monitor_process() {
         # 获取实时内存占用并转换为 MB
         rss_kb=$(echo $cpu_mem_usage | awk '{print $3}')
         rss_mb=$(convert_kb_to_mb $rss_kb)
-        
-        # 输出 CPU 使用率，内存占用 (RSS)，以及峰值内存占用
-        echo "CPU Usage: $(echo $cpu_mem_usage | awk '{print $1}')% | Memory Usage (RSS): ${rss_mb} MB | Peak Memory Usage: ${peak_mem_value} MB"
+
+        # 获取虚拟内存占用并转换为 MB
+        virtual_mem=$(get_virtual_memory $pid)
+        virtual_mem_value=$(echo $virtual_mem | awk '{print $1}')
+        virtual_mem_value=$(convert_kb_to_mb $virtual_mem_value)  # 转换为MB
+
+        # 输出 CPU 使用率，内存占用 (RSS)，虚拟内存占用和峰值内存占用
+        echo "CPU Usage: $(echo $cpu_mem_usage | awk '{print $1}')% | Memory Usage (RSS): ${rss_mb} MB | Virtual Memory: ${virtual_mem_value} MB | Peak Memory Usage: ${peak_mem_value} MB"
         
         sleep $INTERVAL
     done
